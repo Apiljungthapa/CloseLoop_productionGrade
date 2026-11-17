@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+python-dotenv
+loguru
+requests
+qdrant-client
+psycopg[binary]>=3.2,<4
+sqlglot>=26,<29
+langgraph>=0.6.11,<0.7
+redis>=5,<7

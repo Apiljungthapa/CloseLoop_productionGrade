@@ -1,0 +1,17 @@
+chunking:
+  section_chunking: "true"
+
+  recursive_text_splitter: # Fallback for unsupported formats and oversized sections
+    chunk_size: 500
+    chunk_overlap: 300
+
+embedding:
+  model_name: "gemini-embedding-001"
+  vector_size: 512
+
+qdrant:
+  collection_name: "rag_documents"
+  vector_size: 512
+  cluster_endpoint: "${QDRANT_CLUSTER_ENDPOINT}"  # set in the root .env
+  api_key: "${QDRANT_API_KEY}"  # set in the root .env, never commit
+  local_path: "./qdrant_storage"

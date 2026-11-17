@@ -1,0 +1,9 @@
+.ts-banner{
+  padding:10px 24px;font-size:13.5px;line-height:1.45;border-bottom:1px solid transparent;
+}
+.ts-banner ul{list-style:none;margin:0 auto;padding:0;max-width:1400px;display:grid;gap:3px;}
+.ts-banner a{font-weight:700;text-decoration:underline;color:inherit;margin-left:6px;white-space:nowrap;}
+.ts-banner-overdue{background:#FDECEC;color:#9B1C1C;border-color:#F3C7C9;}
+.ts-banner-due{background:#FEF3C7;color:#92400E;border-color:#FCD9A0;}
+.ts-banner-upcoming{background:#EAF0FF;color:#1E3FA0;border-color:#CFDBFA;}
+@media (max-width:760px){.ts-banner{padding:10px 16px;}}

@@ -1,0 +1,766 @@
+/* ============================================================
+   CloseLoop UI — modern, clean, accessible
+   ============================================================ */
+
+:root {
+  --cl-bg: #f5f7fb;
+  --cl-surface: #ffffff;
+  --cl-border: #e5e7eb;
+  --cl-border-strong: #d1d5db;
+  --cl-text: #0f172a;
+  --cl-muted: #64748b;
+  --cl-primary: #2563eb;
+  --cl-primary-dark: #1d4ed8;
+  --cl-success: #16a34a;
+  --cl-warning: #d97706;
+  --cl-danger: #dc2626;
+  --cl-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --cl-shadow:
+    0 2px 6px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --cl-shadow-md: 0 6px 18px rgba(15, 23, 42, 0.08);
+  --cl-radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--cl-bg);
+  color: var(--cl-text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -------- Navbar -------- */
+.brand-bar {
+  background: linear-gradient(90deg, #0f172a 0%, #1e3a8a 60%, #2563eb 100%);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+}
+.brand-bar .navbar-brand {
+  letter-spacing: 0.2px;
+}
+.brand-bar .nav-link {
+  color: rgba(255, 255, 255, 0.75) !important;
+  transition: color 0.15s;
+}
+.brand-bar .nav-link:hover,
+.brand-bar .nav-link.active {
+  color: #fff !important;
+}
+
+/* -------- Login -------- */
+.login-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(
+      1200px 500px at 10% 10%,
+      rgba(37, 99, 235, 0.35),
+      transparent 60%
+    ),
+    radial-gradient(
+      1000px 500px at 90% 90%,
+      rgba(14, 165, 233, 0.35),
+      transparent 60%
+    ),
+    linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+}
+.login-card {
+  width: 420px;
+  max-width: 100%;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+/* -------- Cards / panels -------- */
+.card {
+  border: 1px solid var(--cl-border);
+  border-radius: var(--cl-radius);
+  box-shadow: var(--cl-shadow-sm);
+}
+.card-header.bg-white {
+  border-bottom: 1px solid var(--cl-border);
+  font-weight: 600;
+}
+
+/* -------- Role / status badges -------- */
+.role-badge {
+  font-size: 0.68rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* -------- Stat cards -------- */
+.stat-card {
+  border: 1px solid var(--cl-border);
+  border-radius: var(--cl-radius);
+  box-shadow: var(--cl-shadow-sm);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--cl-shadow-md);
+}
+.stat-card .h3 {
+  font-weight: 700;
+}
+
+/* -------- Sub-task blocks -------- */
+.subtask-card {
+  background: #fbfcfe;
+  border: 1px solid var(--cl-border);
+  border-radius: var(--cl-radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.subtask-card:hover {
+  border-color: var(--cl-border-strong);
+}
+
+/* Lead Workbench plan card hover affordance */
+.plan-workbench-card {
+  border: 1px solid var(--cl-border);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.plan-workbench-card:hover {
+  border-color: var(--cl-border-strong);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.cp-rejection .small {
+  line-height: 1.4;
+}
+
+/* -------- Notifications bell -------- */
+.notif-bell {
+  position: relative;
+  cursor: pointer;
+  color: white;
+  font-size: 1.25rem;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.15s;
+}
+.notif-bell:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+.notif-bell .notif-count {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #e5484d;
+  border: 2px solid #0b62cf;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* -------- Notifications panel -------- */
+.notif-popover.popover {
+  border: 1px solid #e6e8ef;
+  border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(16, 22, 42, 0.18);
+  max-width: none;
+  width: 360px;
+}
+.notif-popover .popover-arrow {
+  display: none;
+}
+.notif-popover .notif-body {
+  padding: 0;
+}
+.notif-popover .notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid #eef0f4;
+}
+.notif-popover .notif-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #10162a;
+}
+.notif-popover .notif-head-badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #eef1fb;
+  color: #2f55d4;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.notif-popover .notif-markall {
+  border: none;
+  background: none;
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2f55d4;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.notif-popover .notif-markall:hover {
+  background: #eef1fb;
+}
+.notif-popover .notif-list {
+  max-height: 380px;
+  overflow-y: auto;
+}
+.notif-popover .notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 34px 16px;
+  color: #8a90a2;
+  font-size: 13px;
+}
+.notif-popover .notif-empty i {
+  font-size: 22px;
+}
+.notif-popover .notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f2f6;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.notif-popover .notif-item:last-child {
+  border-bottom: none;
+}
+.notif-popover .notif-item:hover {
+  background: #f7f8fb;
+}
+.notif-popover .notif-item.unread {
+  background: #f4f7ff;
+}
+.notif-popover .notif-item.unread:hover {
+  background: #eef3ff;
+}
+.notif-popover .notif-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.notif-popover .notif-icon.tone-blue {
+  background: #eaf0fe;
+  color: #2f55d4;
+}
+.notif-popover .notif-icon.tone-green {
+  background: #e5f6ee;
+  color: #1fa971;
+}
+.notif-popover .notif-icon.tone-amber {
+  background: #fdf1df;
+  color: #c2570c;
+}
+.notif-popover .notif-icon.tone-red {
+  background: #fdeaea;
+  color: #e5484d;
+}
+.notif-popover .notif-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+.notif-popover .notif-msg {
+  font-size: 12.8px;
+  line-height: 1.4;
+  color: #26304a;
+  white-space: pre-line;
+}
+.notif-popover .notif-item.unread .notif-msg {
+  font-weight: 600;
+  color: #10162a;
+}
+.notif-popover .notif-time {
+  font-size: 11px;
+  color: #9198a8;
+  font-weight: 500;
+}
+.notif-popover .notif-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2f55d4;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* -------- Typography helpers -------- */
+.dashboard-title {
+  font-weight: 700;
+  color: var(--cl-text);
+  letter-spacing: -0.2px;
+}
+.muted-sm {
+  font-size: 0.8rem;
+  color: var(--cl-muted);
+}
+
+/* -------- Misc -------- */
+.kanban-col {
+  background: #eef2f7;
+  border-radius: var(--cl-radius);
+  padding: 12px;
+  min-height: 200px;
+}
+.kanban-card {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: var(--cl-shadow-sm);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.kanban-card:hover {
+  box-shadow: var(--cl-shadow-md);
+}
+.progress-thin {
+  height: 6px;
+  border-radius: 999px;
+}
+
+/* Buttons — slightly tighter, no harsh focus */
+.btn {
+  font-weight: 500;
+}
+.btn-sm {
+  padding: 0.28rem 0.6rem;
+}
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+/* Tables */
+.table {
+  font-size: 0.9rem;
+}
+.table > :not(caption) > * > * {
+  padding: 0.55rem 0.6rem;
+}
+
+/* Alerts */
+.alert {
+  border-radius: var(--cl-radius);
+  border: 1px solid transparent;
+}
+.alert-light {
+  background: #f8fafc;
+  border-color: var(--cl-border);
+  color: var(--cl-muted);
+}
+
+/* Empty-state */
+.empty-state {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--cl-muted);
+  border: 1px dashed var(--cl-border-strong);
+  border-radius: var(--cl-radius);
+  background: #fafbfd;
+}
+.empty-state i {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 8px;
+  opacity: 0.6;
+}
+
+/* Period Calendar widget (Periods page) — a proper bilingual AD/BS
+   calendar: Sun-first AD-month grid, every cell pairing its English day
+   number with its accurate Bikram Sambat day number, Nepal holidays and
+   period coverage colour-coded per day. */
+.period-calendar {
+  font-variant-numeric: tabular-nums;
+}
+.period-calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.pc-title {
+  font-weight: 700;
+  color: var(--cl-text);
+}
+.calendar-month-title {
+  text-align: center;
+  margin-bottom: 12px;
+}
+.calendar-month-title .cm-ad {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--cl-text);
+  letter-spacing: -0.2px;
+}
+.calendar-month-title .cm-bs {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--cl-primary);
+  margin-top: 1px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  background: var(--cl-border);
+  border: 1px solid var(--cl-border);
+  border-radius: var(--cl-radius);
+  padding: 3px;
+}
+.calendar-dow {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--cl-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 4px 0 6px;
+  background: var(--cl-surface);
+}
+/* Saturday + Sunday are weekends: grey (red is reserved for public holidays). */
+.calendar-dow.is-weekend {
+  color: var(--cl-muted);
+}
+.calendar-day {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: var(--cl-surface);
+  color: var(--cl-text);
+  cursor: pointer;
+  padding: 0;
+}
+.calendar-day .cd-ad {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.calendar-day .cd-bs {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cl-muted);
+  line-height: 1.1;
+}
+.calendar-day:hover {
+  background: var(--cl-bg);
+}
+.calendar-day.is-weekend {
+  background: #eef0f4;
+}
+.calendar-day.is-weekend .cd-ad,
+.calendar-day.is-weekend .cd-bs {
+  color: var(--cl-muted);
+  opacity: 0.85;
+}
+.calendar-day.has-holiday .cd-ad {
+  color: var(--cl-danger);
+}
+.calendar-day.has-holiday .cd-bs {
+  color: var(--cl-danger);
+  opacity: 0.75;
+}
+.calendar-day.is-today {
+  border-color: var(--cl-primary);
+  box-shadow: inset 0 0 0 1px var(--cl-primary);
+}
+.calendar-day.is-selected,
+.calendar-day.is-selected:hover {
+  background: var(--cl-primary);
+  border-color: var(--cl-primary);
+}
+.calendar-day.is-selected .cd-ad,
+.calendar-day.is-selected .cd-bs {
+  color: #fff;
+}
+.calendar-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  background: var(--cl-border-strong);
+}
+.calendar-dot.tone-current { background: var(--cl-primary); }
+.calendar-dot.tone-open { background: var(--cl-success); }
+.calendar-dot.tone-closed { background: var(--cl-muted); }
+.calendar-dot.tone-upcoming { background: var(--cl-warning); }
+.calendar-day.is-selected .calendar-dot {
+  background: #fff;
+}
+.calendar-caption {
+  text-align: center;
+  font-size: 11px;
+  color: var(--cl-muted);
+  margin-top: 8px;
+}
+.cd-ad-swatch, .cd-bs-swatch {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: var(--cl-bg);
+  border: 1px solid var(--cl-border);
+  color: var(--cl-muted);
+}
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--cl-border);
+  font-size: 12px;
+  color: var(--cl-muted);
+}
+.calendar-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.calendar-legend .calendar-dot {
+  position: static;
+  width: 7px;
+  height: 7px;
+}
+.calendar-ring-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--cl-border-strong);
+  display: inline-block;
+}
+.calendar-ring-swatch.is-selected { border-color: var(--cl-primary); background: var(--cl-primary); }
+.calendar-ring-swatch.is-today { border-color: var(--cl-primary); background: transparent; }
+.calendar-selected-info {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--cl-border);
+}
+
+/* Plan row link — keep hover subtle */
+a.text-decoration-none:hover .stat-card {
+  border-color: var(--cl-primary);
+}
+
+/* -------- Font weight utility -------- */
+.fw-600 {
+  font-weight: 600;
+}
+
+/* ============================================================
+   Entity Group Tree — recursive hierarchy view
+   ============================================================ */
+.tree-root {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.92rem;
+}
+
+.tree-node {
+  display: flex;
+  flex-direction: column;
+}
+
+.tree-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px 4px 0;
+  border-radius: 6px;
+  transition: background 0.12s ease;
+  min-height: 36px;
+}
+.tree-row:hover {
+  background: #f1f5f9;
+}
+.tree-row.selected {
+  background: #dbeafe;
+  box-shadow: inset 0 0 0 1px #93c5fd;
+}
+.tree-row.inactive {
+  opacity: 0.55;
+}
+.tree-row.inactive .tree-label .bi-folder,
+.tree-row.inactive .tree-label .bi-folder2-open {
+  color: var(--cl-muted) !important;
+}
+
+.tree-chevron {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cl-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.tree-chevron:hover {
+  background: rgba(15, 23, 42, 0.06);
+  color: var(--cl-text);
+}
+.tree-chevron:focus-visible {
+  outline: 2px solid var(--cl-primary);
+  outline-offset: 1px;
+}
+
+.tree-label {
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+  display: inline-flex;
+  align-items: center;
+  flex: 1 1 auto;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+  min-width: 0;
+}
+.tree-label > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tree-label:hover {
+  background: rgba(37, 99, 235, 0.06);
+}
+.tree-label:focus-visible {
+  outline: 2px solid var(--cl-primary);
+  outline-offset: 1px;
+}
+
+/* ============================================================
+   Task Detail Panel — side panel for task details
+   ============================================================ */
+.cl-task-detail-panel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 420px;
+  max-width: 100%;
+  height: 100vh;
+  background: white;
+  border-left: 1px solid var(--cl-border);
+  box-shadow: -2px 0 8px rgba(15, 23, 42, 0.1);
+  overflow-y: auto;
+  z-index: 1045; /* above the floating chat (1040), below Bootstrap modals (1050+) */
+  padding: 20px;
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.cl-task-detail-panel h5 {
+  font-weight: 600;
+  margin: 0;
+  color: var(--cl-text);
+}
+
+.cl-task-detail-panel h6 {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--cl-text);
+  margin-bottom: 0.5rem;
+}
+
+.cl-task-detail-panel .space-y-2 > * + * {
+  margin-top: 8px;
+}
+
+.tree-actions {
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.tree-row:hover .tree-actions,
+.tree-row.selected .tree-actions,
+.tree-row:focus-within .tree-actions {
+  opacity: 1;
+}
+.tree-actions .btn {
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.tree-children {
+  position: relative;
+  margin-left: 11px;
+  padding-left: 8px;
+  border-left: 1px dotted var(--cl-border-strong);
+}

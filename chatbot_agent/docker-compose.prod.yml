@@ -1,0 +1,199 @@
+# CloseLoop chatbot — PRODUCTION (query side only), integrated with the CloseLoop prod stack.
+#
+#   redis (private) + query_gateway (private)
+#
+# Nothing is published to the host. The only caller is the CloseLoop backend, which reaches the
+# gateway as http://chatbot-gateway:8010 over the CloseLoop network (closeloop-prod_default). The
+# backend authenticates the user and supplies THEIR tenant_id plus the shared keys; browsers never
+# talk to the gateway and never see a key.
+#
+# The gateway reads the CloseLoop database directly, through the read-only `chatbot_ro` role
+# (infra/db/readonly_role.sql), at the CloseLoop `db` service. Vectors live in Qdrant (cloud).
+# Document ingestion (upload -> Qdrant) is the write side. It is OFF unless you ask for it with
+# `--profile ingest` (ingestion API + Celery worker + RabbitMQ + a job-status Redis). The CloseLoop
+# backend reaches it as http://chatbot-ingestion:8001 and is its only caller; every call carries the
+# signed-in user's tenant, and the service keeps tenants' documents apart.
+#
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml --profile ingest up -d --build
+#
+# The CloseLoop prod stack must be up first (this joins its network).
+name: closeloop-chatbot
+
+services:
+  # Answer cache + per-conversation memory. Disposable: no persistence, bounded memory.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env.prod}
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 256mb --maxmemory-policy allkeys-lru --save "" --appendonly no
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  query_gateway:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.gateway
+    restart: unless-stopped
+    depends_on:
+      redis: {condition: service_healthy}
+    # Explicit list (not env_file) so only what the gateway needs enters the container.
+    environment:
+      LLM_PROVIDER: ${LLM_PROVIDER:-gemini}
+      LLM_FALLBACKS: ${LLM_FALLBACKS:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5-5}
+      LLM_COMPAT_BASE_URL: ${LLM_COMPAT_BASE_URL:-}
+      LLM_COMPAT_API_KEY: ${LLM_COMPAT_API_KEY:-}
+      LLM_COMPAT_MODEL: ${LLM_COMPAT_MODEL:-}
+      GEMINI_MAX_RPM: ${GEMINI_MAX_RPM:-0}
+      OPENAI_MAX_RPM: ${OPENAI_MAX_RPM:-0}
+      ANTHROPIC_MAX_RPM: ${ANTHROPIC_MAX_RPM:-0}
+      LLM_COMPAT_MAX_RPM: ${LLM_COMPAT_MAX_RPM:-0}
+      QDRANT_CLUSTER_ENDPOINT: ${QDRANT_CLUSTER_ENDPOINT:-}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-rag_documents}
+      QDRANT_VECTOR_SIZE: ${QDRANT_VECTOR_SIZE:-512}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
+      MIN_RETRIEVAL_SCORE: ${MIN_RETRIEVAL_SCORE:-0.25}
+      # Database branch: tenant-scoped, read-only. The key is the shared secret the CloseLoop
+      # backend sends (X-SQL-API-Key); the tenant is chosen by the backend from the user's login.
+      DB_ENABLED: ${DB_ENABLED:-true}
+      DB_URL: ${DB_URL:?Set DB_URL (chatbot_ro) in .env.prod}
+      SQL_PLANNER_API_ENABLED: ${SQL_PLANNER_API_ENABLED:-true}
+      SQL_QUERY_EXECUTION_ENABLED: ${SQL_QUERY_EXECUTION_ENABLED:-true}
+      SQL_PLANNER_API_KEY: ${SQL_PLANNER_API_KEY:?Set SQL_PLANNER_API_KEY in .env.prod}
+      # Required on every /workflow/* call (X-API-Key): a second wall in front of the gateway.
+      API_AUTH_KEY: ${API_AUTH_KEY:?Set API_AUTH_KEY in .env.prod}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+      CACHE_ENABLED: ${CACHE_ENABLED:-true}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    networks:
+      default: {}
+      closeloop:
+        aliases: [chatbot-gateway]
+    # No ports: — only the CloseLoop backend reaches this, by name, over the closeloop network.
+
+  # ---- document ingestion (profile "ingest") --------------------------------------------------
+  # Message broker for document processing. Private: no published port.
+  rabbitmq:
+    profiles: [ingest]
+    image: rabbitmq:3.13-alpine
+    hostname: rabbitmq   # queue data is stored per hostname: keep it fixed
+    restart: unless-stopped
+    mem_limit: 400m
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-closeloop}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-}
+    # Compose checks `:?` on the whole file even for inactive profiles, so the secret is checked here.
+    command: ["sh", "-c", 'test -n "$$RABBITMQ_DEFAULT_PASS" || { echo "Set RABBITMQ_PASSWORD in .env.prod" >&2; exit 1; }; exec docker-entrypoint.sh rabbitmq-server']
+    volumes: ["rabbitmq_data:/var/lib/rabbitmq"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+
+  # Upload job status. Unlike `redis` (an evicting cache) this one persists and never evicts.
+  jobs_redis:
+    profiles: [ingest]
+    image: redis:7-alpine
+    restart: unless-stopped
+    mem_limit: 320m
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env.prod}
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 256mb --maxmemory-policy noeviction --appendonly yes --dir /data
+    volumes: ["jobs_redis_data:/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # API: saves uploads and queues them (fast). Scale the worker, not this.
+  ingestion:
+    profiles: [ingest]
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.ingestion
+    image: closeloop-chatbot/ingestion:prod
+    restart: unless-stopped
+    mem_limit: 400m
+    environment: &ingest-env
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
+      QDRANT_CLUSTER_ENDPOINT: ${QDRANT_CLUSTER_ENDPOINT:-}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:-}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-rag_documents}
+      CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-closeloop}:${RABBITMQ_PASSWORD:-}@rabbitmq:5672//
+      JOBS_REDIS_URL: redis://:${REDIS_PASSWORD}@jobs_redis:6379/0
+      # Tells the gateway to forget cached document searches after an upload/delete.
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      CACHE_ENABLED: ${CACHE_ENABLED:-true}
+      UPLOAD_DIR: /data/uploads
+      PYTHONPATH: /app:/app/src
+      # The CloseLoop backend sends this as X-API-Key (its CHATBOT_INGEST_API_KEY).
+      API_AUTH_KEY: ${INGEST_API_AUTH_KEY:-}
+      ALLOWED_ORIGINS: ""   # no browser ever calls this service
+      MAX_UPLOAD_MB: ${INGEST_MAX_UPLOAD_MB:-25}
+      INGEST_RATE_LIMIT: ${INGEST_RATE_LIMIT:-120/m}   # files per minute per worker (embedding quota)
+    command: ["sh", "-c", 'test -n "$$API_AUTH_KEY" || { echo "Set INGEST_API_AUTH_KEY in .env.prod" >&2; exit 1; }; exec uvicorn api:app --app-dir src --host 0.0.0.0 --port 8001']
+    volumes: ["uploads:/data/uploads"]
+    depends_on:
+      rabbitmq: {condition: service_healthy}
+      jobs_redis: {condition: service_healthy}
+    networks:
+      default: {}
+      closeloop:
+        aliases: [chatbot-ingestion]
+    # No ports: — only the CloseLoop backend reaches this, by name, over the closeloop network.
+
+  # Celery worker: read -> chunk -> embed -> Qdrant. Scale with `--scale ingestion_worker=3`.
+  ingestion_worker:
+    profiles: [ingest]
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.ingestion
+    image: closeloop-chatbot/ingestion:prod
+    restart: unless-stopped
+    mem_limit: 800m
+    working_dir: /app/src
+    command: ["celery", "-A", "tasks", "worker", "-Q", "ingestion", "-l", "info", "-c", "${INGEST_CONCURRENCY:-2}", "--max-tasks-per-child", "200"]
+    environment: *ingest-env
+    volumes: ["uploads:/data/uploads"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A tasks inspect ping -d celery@$$HOSTNAME -t 5 | grep -q pong"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    depends_on:
+      rabbitmq: {condition: service_healthy}
+      jobs_redis: {condition: service_healthy}
+
+volumes:
+  rabbitmq_data:
+  jobs_redis_data:
+  uploads:
+
+networks:
+  closeloop:
+    name: closeloop-prod_default
+    external: true

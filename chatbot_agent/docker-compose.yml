@@ -1,0 +1,199 @@
+# One command for everything:  docker compose up --build   (or: make up)
+#   qdrant         -> http://localhost:6333  (dashboard: /dashboard)
+#   ingestion API  -> http://localhost:8011  (upload / documents)  -> RabbitMQ queue -> ingestion_worker (Celery)
+#   RabbitMQ UI    -> http://localhost:15672
+#   query gateway  -> http://localhost:8010  (retrieve / ask)
+#   Adminer        -> http://localhost:8080
+# Secrets (GEMINI_API_KEY, ...) come from .env; the Qdrant settings below override it
+# so the containers always talk to the local qdrant service.
+x-app-env: &app-env
+  QDRANT_CLUSTER_ENDPOINT: http://qdrant:6333
+  QDRANT_API_KEY: ${QDRANT_LOCAL_API_KEY:-local-qdrant-key}
+  # Cache is optional for the apps (they fail open), so redis is not a hard dependency below.
+  REDIS_URL: redis://:${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}@redis:6379/0
+
+x-ingest-env: &ingest-env
+  <<: *app-env
+  CELERY_BROKER_URL: amqp://${RABBITMQ_USER:-closeloop}:${RABBITMQ_PASSWORD}@rabbitmq:5672//
+  JOBS_REDIS_URL: redis://:${REDIS_PASSWORD}@jobs_redis:6379/0
+  UPLOAD_DIR: /data/uploads
+  PYTHONPATH: /app:/app/src
+  INGEST_FAKE_EMBEDDINGS: ${INGEST_FAKE_EMBEDDINGS:-false}  # true only for load tests: skips Gemini embedding calls
+
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports: ["6333:6333"]
+    environment:
+      QDRANT__SERVICE__API_KEY: ${QDRANT_LOCAL_API_KEY:-local-qdrant-key}
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c ':> /dev/tcp/127.0.0.1/6333'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # Cache + shared rate limiter. Private: no published port, password required, bounded memory,
+  # no persistence (everything in it can be rebuilt). Inspect with:
+  #   docker compose exec redis sh -c 'redis-cli --no-auth-warning -a "$REDIS_PASSWORD" info stats'
+  redis:
+    image: redis:7-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 256mb --maxmemory-policy allkeys-lru --save "" --appendonly no
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # Web UI for the cache: http://localhost:8083  (login: admin / the password whose bcrypt hash is REDIS_UI_PASSWORD_HASH in .env).
+  # Bound to localhost only; never publish it on a shared network.
+  redis_ui:
+    image: rediscommander/redis-commander:latest
+    ports: ["127.0.0.1:8083:8081"]
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+      HTTP_USER: admin
+      HTTP_PASSWORD_HASH: ${REDIS_UI_PASSWORD_HASH:?Set REDIS_UI_PASSWORD_HASH in .env (see .env.example)}
+    depends_on:
+      redis: {condition: service_healthy}
+    restart: unless-stopped
+
+  # Message broker for document processing. Management UI (localhost only): http://localhost:15672
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    hostname: rabbitmq   # queue data is stored per hostname: keep it fixed
+    ports: ["127.0.0.1:15672:15672"]
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-closeloop}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD in .env}
+    volumes: ["rabbitmq_data:/var/lib/rabbitmq"]
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+    restart: unless-stopped
+
+  # Job status store for uploads. Unlike `redis` (an evicting cache) this one persists and never evicts.
+  jobs_redis:
+    image: redis:7-alpine
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
+    command:
+      - sh
+      - -c
+      - exec redis-server --requirepass "$$REDIS_PASSWORD" --maxmemory 256mb --maxmemory-policy noeviction --appendonly yes --dir /data
+    volumes: ["jobs_redis_data:/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # API: saves uploads and enqueues them (fast). Scale the worker, not this.
+  ingestion:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.ingestion
+    ports: ["8011:8001"]
+    env_file: .env
+    environment: *ingest-env
+    volumes: ["uploads:/data/uploads"]
+    depends_on:
+      qdrant: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      jobs_redis: {condition: service_healthy}
+      redis: {condition: service_healthy, required: false}
+    restart: unless-stopped
+
+  # Celery worker: parse -> chunk -> embed -> Qdrant. Scale with:  docker compose up -d --scale ingestion_worker=3
+  # Each worker runs INGEST_CONCURRENCY files in parallel; INGEST_RATE_LIMIT caps files/minute per worker (Gemini quota).
+  ingestion_worker:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.ingestion
+    image: closeloop-dev/ingestion:local
+    working_dir: /app/src
+    command: ["celery", "-A", "tasks", "worker", "-Q", "ingestion", "-l", "info", "-c", "${INGEST_CONCURRENCY:-4}", "--max-tasks-per-child", "200"]
+    env_file: .env
+    environment: *ingest-env
+    volumes: ["uploads:/data/uploads"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A tasks inspect ping -d celery@$$HOSTNAME -t 5 | grep -q pong"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    depends_on:
+      qdrant: {condition: service_healthy}
+      rabbitmq: {condition: service_healthy}
+      jobs_redis: {condition: service_healthy}
+    restart: unless-stopped
+
+  frontend:
+    image: nginx:alpine
+    ports: ["3000:80"]
+    volumes: ["./frontend:/usr/share/nginx/html:ro"]
+    restart: unless-stopped
+
+  query_gateway:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.gateway
+    ports: ["8010:8010"]
+    env_file: .env
+    environment:
+      <<: *app-env
+      DB_URL: postgresql://${POSTGRES_USER:-closeloop}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-closeloop}
+    depends_on:
+      qdrant: {condition: service_healthy}
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy, required: false}
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    ports: ["127.0.0.1:5432:5432"]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-closeloop}
+      POSTGRES_USER: ${POSTGRES_USER:-closeloop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - type: bind
+        source: ./closeloop_prod_backup_20261008_040414.sql
+        target: /docker-entrypoint-initdb.d/10-closeloop-backup.sql
+        read_only: true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:5
+    ports: ["127.0.0.1:8080:8080"]
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      postgres: {condition: service_healthy}
+    restart: unless-stopped
+
+volumes:
+  qdrant_data:
+  postgres_data:
+  rabbitmq_data:
+  jobs_redis_data:
+  uploads:

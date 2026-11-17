@@ -1,0 +1,119 @@
+CloseLoop — How to Run
+======================
+
+PREREQUISITES
+-------------
+- Docker Desktop (or Docker Engine + Compose v2)
+- Free host ports: 8080 (frontend), 8000 (backend), 5433 (Postgres)
+
+
+FIRST-TIME START
+----------------
+From the project root (the folder containing docker-compose.yml):
+
+    docker compose up --build
+
+On first boot the backend will:
+  1. Wait for Postgres to be healthy
+  2. Run `alembic upgrade head` to create the schema
+  3. Run `seed.py` to insert demo data (idempotent — safe to re-run)
+  4. Start uvicorn on port 8000
+
+Open: http://localhost:8080
+
+
+SUBSEQUENT STARTS
+-----------------
+    docker compose up -d           # start in background
+    docker compose logs -f backend # follow backend logs
+    docker compose ps              # check container status
+
+
+STOPPING
+--------
+    docker compose down            # stop containers, KEEP database
+    docker compose down -v         # stop AND wipe database volume
+
+
+DEMO ACCOUNTS
+-------------
+Platform Owner : owner@closeloop.io   / owner123   (manages tenants; sees no tenant data)
+Super Admin    : admin@acme.com       / admin123   (creates Plans + Tasks; assigns Tasks to Team Leads)
+Team Lead      : lead@acme.com        / lead123    (creates SubTasks under assigned Tasks; reviews submissions)
+Team Member    : member@acme.com      / member123  (completes Checkpoints; submits SubTask for review)
+Team Member    : member2@acme.com     / member123
+
+
+ROLE BOUNDARIES (server-enforced)
+---------------------------------
+SUPER_ADMIN:  Plans CRUD · Tasks CRUD (assigns each Task to a Team Lead)
+              Cannot create or review sub-tasks.
+TEAM_LEAD:    SubTasks CRUD on tasks where task.assigned_to_id == me.id only
+              (assignee must be a TEAM_MEMBER; reviewer is always self).
+              Reviews submitted sub-tasks for those tasks.
+              Cannot create plans or tasks.
+TEAM_MEMBER:  Completes checkpoints sequentially; submits sub-task for review.
+
+
+URLS
+----
+Frontend     : http://localhost:8080
+Backend API  : http://localhost:8000/api/health
+Postgres     : localhost:5433  (user: postgres / pass: postgres / db: closeloop)
+WebSocket    : ws://localhost:8000/ws?token=<JWT>
+
+
+COMMON TASKS
+------------
+Re-seed demo data (wipe rows, keep schema):
+    docker compose exec -e SEED_RESET=1 backend python seed.py
+
+Run the smoke test (verifies all roles + bug fixes):
+    docker compose exec backend python smoke_test.py
+
+Open a psql shell:
+    docker compose exec db psql -U postgres -d closeloop
+
+Check current Alembic migration:
+    docker compose exec backend alembic current
+
+Create a new migration after editing app/models.py:
+    docker compose exec backend alembic revision --autogenerate -m "describe change"
+    docker compose exec backend alembic upgrade head
+
+Rebuild backend image after changing requirements.txt or Dockerfile:
+    docker compose up -d --build backend
+
+
+TROUBLESHOOTING
+---------------
+- "Port already in use" on 5433/8000/8080
+    Edit docker-compose.yml and change the host-side port.
+
+- Backend keeps restarting
+    docker compose logs backend          # look for traceback
+    docker compose exec db pg_isready    # confirm DB is up
+
+- Want a totally clean slate
+    docker compose down -v
+    docker compose up --build
+
+- WebSocket disconnected (amber dot in UI)
+    The frontend auto-reconnects with exponential backoff (1s → 15s).
+    Check backend is running: curl http://localhost:8000/api/health
+
+
+DEMO FLOW (5 MIN)
+-----------------
+1. Login as admin@acme.com (Super Admin) -> open "Period Close — June 2026"
+   plan -> add a new Task and assign it to Larry Lead.
+2. Logout, login as lead@acme.com (Team Lead) -> open the same plan ->
+   expand the task you were assigned -> add a sub-task assigned to
+   Mia Member with 2-3 checkpoints.
+3. In another browser, login as member@acme.com (Team Member).
+4. Member ticks all checkpoints in order, then clicks "Submit to Team Lead".
+5. Lead sees a bell notification, opens the sub-task, clicks Approve.
+   Status rolls up to COMPLETED in real time.
+6. Login as owner@closeloop.io -> create a new tenant "Picnic Inc"
+   with a Super Admin. Logout, login as that new admin —
+   they see ZERO Acme data (tenant isolation).

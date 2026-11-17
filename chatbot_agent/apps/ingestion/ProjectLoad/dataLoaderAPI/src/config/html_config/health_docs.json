@@ -1,0 +1,10 @@
+{
+    "main_title": {
+        "tags": ["title"],
+        "classes": []
+    },
+    "section_header": {
+        "tags": ["section"],
+        "classes": ["section-heading", "doc-section-title"]
+    }
+}

@@ -1,0 +1,30 @@
+sources:
+  HEALTHDOCS:
+    payload:
+      search: &search_base
+        queryText: "*"
+        category: "{category}"
+        fileFormat: "{fileFormat}"
+        includeAllRevisions: false
+        orderBy: "publishedOn:desc"
+      download: {}
+      revisions_search:
+        <<: *search_base
+        includeAllRevisions: true
+        expiredOnly: true
+    metadata:
+      recordId: str
+      dataId: str
+      revision: int
+      title: str
+      summary: str
+      category: str
+      fileFormat: str
+      storagePath: str
+      issuedBy: str
+      publishedOn: str
+      lastRevisedOn: str
+      validUntil: str
+      keywords:
+        - str
+      isLatest: bool

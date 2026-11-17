@@ -1,0 +1,1454 @@
+/* ===================================================================
+   CloseLoop — global stylesheet
+   Ported from the original single-file mockup and organised for the
+   component-based React app. Class names are kept identical so the
+   markup in the components maps 1:1 to the original design.
+   =================================================================== */
+
+.leaddash{
+  --blue:#2F55D4;
+  --blue-dark:#1A2F6B;
+  --blue-soft:#E7EDFF;
+  --green:#1FA971;
+  --green-soft:#E4F7EE;
+  --amber:#B9770E;
+  --amber-soft:#FDECC8;
+  --red:#E5484D;
+  --red-soft:#FDE7E7;
+  --gray-bg:#F4F5F7;
+  --gray-line:#E7E9EF;
+  --gray-mute:#8A90A6;
+  --ink:#1D2333;
+  --radius:12px;
+}
+.leaddash *{box-sizing:border-box;margin:0;padding:0;}
+.leaddash{
+  font-family:'Inter','Segoe UI',system-ui,sans-serif;
+  color:var(--ink);
+  position:relative;
+}
+/* Full-bleed gray canvas for the Lead dashboard / pack workspace — mirrors
+   the frontend_samrat `body` background so those pages look identical. */
+.leaddash-page{background:#F4F5F7;min-height:calc(100vh - 84px);}
+.leaddash button{font-family:inherit;}
+.leaddash input, .leaddash textarea, .leaddash select{font-family:inherit;}
+
+.leaddash .icon{display:inline-block;vertical-align:middle;flex-shrink:0;}
+
+/* ===== TOP BAR ===== */
+.leaddash .topbar{
+  min-height:76px;background:linear-gradient(90deg, #0957b6 20%, #0b67d7 100%);
+  display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,3vw,36px);
+  flex-wrap:wrap;gap:12px;
+}
+.leaddash .logo-block .logo{color:#fff;font-weight:800;font-size:24px;letter-spacing:.2px;}
+.leaddash .logo-block .tag{color:#B9C4EA;font-size:12px;margin-top:-2px;}
+.leaddash .nav-links{display:flex;gap:6px;flex-wrap:wrap;}
+.leaddash .nav-links a{color:#B9C4EA;text-decoration:none;font-size:14px;font-weight:600;padding:9px 14px;border-radius:8px;white-space:nowrap;cursor:pointer;}
+.leaddash .nav-links a.active{background:rgba(255,255,255,.14);color:#fff;}
+.leaddash .topbar-right{display:flex;align-items:center;gap:22px;flex-shrink:0;}
+.leaddash .bell{color:#fff;font-size:18px;opacity:.9;display:flex;}
+.leaddash .user-pill{
+  display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.14);
+  border-radius:30px;padding:6px 16px 6px 10px;
+}
+.leaddash .user-dot{width:8px;height:8px;border-radius:50%;background:#3ECF8E;border:2px solid rgba(255,255,255,.5);}
+.leaddash .user-name{color:#fff;font-size:13.5px;font-weight:700;line-height:1.1;}
+.leaddash .user-role{color:#C6CEEE;font-size:11px;line-height:1.1;}
+
+.leaddash .page-wrap{padding:32px clamp(16px,4vw,40px) 50px;max-width:1728px;margin:0 auto;}
+
+/* shared buttons */
+.leaddash .btn{font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:9px;border:1px solid var(--gray-line);background:#fff;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;}
+.leaddash .btn-primary{background:var(--blue);border-color:var(--blue);color:#fff;}
+.leaddash .btn-primary:hover{background:#2647b8;}
+.leaddash .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ===== PAGE 1: periods ===== */
+.leaddash .page-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.leaddash .page-head h1{font-size:28px;font-weight:800;}
+.leaddash .page-head p{font-size:14px;color:var(--gray-mute);margin-top:5px;}
+.leaddash .overview-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:16px;margin-bottom:24px;}
+.leaddash .card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);padding:20px 22px;}
+.leaddash .team-progress-card .card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.leaddash .team-progress-card h3{font-size:14.5px;font-weight:700;}
+.leaddash .team-progress-card .pct{font-size:26px;font-weight:800;color:var(--blue);}
+.leaddash .bar-track{height:9px;background:var(--gray-bg);border-radius:6px;overflow:hidden;margin-bottom:10px;}
+.leaddash .bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),#6D8BF0);border-radius:6px;}
+.leaddash .card-sub{font-size:12px;color:var(--gray-mute);}
+.leaddash .stat-card{display:flex;flex-direction:column;justify-content:center;gap:6px;}
+.leaddash .stat-card .num{font-size:26px;font-weight:800;}
+.leaddash .stat-card .lbl{font-size:12.5px;color:var(--gray-mute);font-weight:600;}
+.leaddash .stat-card.overdue .num{color:var(--red);}
+.leaddash .stat-card.review .num{color:var(--amber);}
+.leaddash .stat-card.done .num{color:var(--green);}
+
+/* "Time Logged Today" reuses the team-progress-card layout (bar + pct +
+   sub-line) — only the accent color differs, to read as a time metric
+   rather than a task-completion metric. */
+.leaddash .time-logged-card .pct{color:var(--green);}
+.leaddash .time-logged-card .bar-fill{background:linear-gradient(90deg,var(--green),#4ADE80);}
+
+.leaddash .filter-row{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.leaddash .search-box{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--gray-line);border-radius:9px;padding:10px 14px;font-size:13px;color:var(--gray-mute);width:260px;}
+.leaddash .search-box input{border:none;outline:none;font-size:13px;color:var(--ink);background:transparent;width:100%;}
+.leaddash .dd-filter{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:9px;border:1px solid var(--gray-line);background:#fff;color:var(--ink);cursor:pointer;}
+.leaddash .chip-filter{font-size:13px;font-weight:600;padding:9px 14px;border-radius:9px;border:1px solid var(--gray-line);background:#fff;color:var(--ink);cursor:pointer;}
+.leaddash .chip-filter.active{background:var(--blue-dark);color:#fff;border-color:var(--blue-dark);}
+
+.leaddash .period-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:18px;}
+.leaddash .period-card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);padding:20px;cursor:pointer;transition:box-shadow .15s, transform .15s;}
+.leaddash .period-card:hover{box-shadow:0 8px 24px rgba(22,34,63,.08);transform:translateY(-2px);}
+.leaddash .period-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.leaddash .period-entity{display:flex;align-items:center;gap:10px;}
+.leaddash .entity-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;}
+.leaddash .entity-name{font-size:15px;font-weight:700;}
+.leaddash .entity-period{font-size:12px;color:var(--gray-mute);}
+.leaddash .status-tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.leaddash .status-open{background:var(--blue-soft);color:var(--blue);}
+.leaddash .status-risk{background:var(--red-soft);color:var(--red);}
+.leaddash .status-closed{background:var(--green-soft);color:var(--green);}
+.leaddash .pack-top-tags{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.leaddash .pack-alert-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.leaddash .pack-alert-badge.review{background:var(--amber-soft);color:var(--amber);}
+.leaddash .pack-alert-badge.assigned{background:var(--blue-soft);color:var(--blue);}
+
+/* ===== Tags — free-form labels on tasks/sub-tasks ===== */
+.leaddash .tag-chip{
+  display:inline-block;max-width:88px;background:#EEF0F5;color:#565C78;
+  font-size:9.5px;font-weight:700;line-height:1.5;padding:1.5px 7px;border-radius:9px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;
+}
+.leaddash .tag-chip-more{background:transparent;color:var(--gray-mute);padding-left:2px;padding-right:0;max-width:none;}
+.leaddash .tag-chip-list{display:flex;flex-wrap:wrap;align-items:center;gap:4px;}
+/* Table cell — one line, never grows the row; overflow tags collapse into +N */
+.leaddash .tags-cell{max-width:150px;}
+.leaddash .tags-cell .tag-chip-list{display:flex;flex-wrap:nowrap;align-items:center;gap:4px;overflow:hidden;}
+/* Editable chip field (modals / detail panels) — free to wrap, its own row */
+.leaddash .tags-input{display:flex;flex-wrap:wrap;gap:5px;align-items:center;border:1px solid var(--gray-line);border-radius:8px;padding:6px 8px;background:#fff;}
+.leaddash .tags-input input{border:none;outline:none;flex:1;min-width:100px;font-size:12.5px;background:transparent;padding:2px 0;}
+.leaddash .tags-input .tag-chip{display:inline-flex;align-items:center;gap:4px;max-width:160px;}
+.leaddash .tags-input .tag-chip .tag-remove{cursor:pointer;display:flex;color:#8A90A6;flex-shrink:0;}
+.leaddash .tags-input .tag-chip .tag-remove:hover{color:var(--red);}
+.leaddash .tag-filter-select{padding:0 12px;gap:8px;}
+.leaddash .tag-filter-select select{border:none;outline:none;background:transparent;font:inherit;font-weight:600;color:var(--ink);cursor:pointer;padding:9px 0;}
+.leaddash .period-progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.leaddash .period-progress-row span{font-size:12px;color:var(--gray-mute);font-weight:600;}
+.leaddash .period-progress-row .pval{color:var(--ink);font-weight:700;}
+.leaddash .period-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--gray-line);}
+.leaddash .due-info{font-size:12px;color:var(--gray-mute);}
+.leaddash .due-info b{color:var(--ink);}
+.leaddash .avatar-stack{display:flex;}
+.leaddash .avatar-stack .m-avatar{width:24px;height:24px;border-radius:50%;border:2px solid #fff;margin-left:-8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9.5px;font-weight:700;}
+.leaddash .avatar-stack .m-avatar:first-child{margin-left:0;}
+
+/* ===== Dashboard extras: Upcoming Deadlines + Team Workload ===== */
+.leaddash .dash-extra-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;margin-bottom:24px;align-items:stretch;}
+.leaddash .dash-extra-grid.solo{grid-template-columns:minmax(0,1fr);}
+@media (max-width: 900px){ .leaddash .dash-extra-grid{grid-template-columns:1fr;} }
+.leaddash .panel-card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);padding:20px 22px;}
+.leaddash .panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.leaddash .panel-head h3{font-size:15px;font-weight:800;}
+.leaddash .panel-head .view-all{font-size:12.5px;font-weight:700;color:var(--blue);cursor:pointer;}
+.leaddash .panel-sub{font-size:11.5px;color:var(--gray-mute);margin-top:-10px;margin-bottom:14px;}
+
+.leaddash .deadline-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--gray-line);}
+.leaddash .deadline-item:last-child{border-bottom:none;}
+.leaddash .dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.leaddash .dl-dot.red{background:var(--red);} .dl-dot.amber{background:var(--amber);} .dl-dot.gray{background:var(--gray-mute);}
+.leaddash .dl-title{font-size:13.5px;font-weight:700;}
+.leaddash .dl-sub{font-size:11.5px;color:var(--gray-mute);margin-top:1px;}
+.leaddash .dl-when{font-size:12px;font-weight:700;white-space:nowrap;margin-left:auto;}
+.leaddash .dl-when.red{color:var(--red);} .dl-when.amber{color:var(--amber);} .dl-when.gray{color:var(--gray-mute);}
+
+/* Deadlines page (full list behind "View all") */
+/* ---- Member dashboard: 3 side-by-side deadline tables in one panel ---- */
+.leaddash .mdp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.leaddash .mdp-grid-2{grid-template-columns:repeat(2,1fr);}
+@media (max-width: 760px){ .leaddash .mdp-grid{grid-template-columns:1fr;} }
+.leaddash .mdp-col{min-width:0;border:1px solid var(--gray-line);border-radius:10px;padding:14px 16px;}
+.leaddash .mdp-heading{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:10px;}
+.leaddash .mdp-heading .mdp-count{font-weight:600;color:var(--gray-mute);}
+/* Fixed (non-content-based) column widths so the header and every row —
+   each its own grid formatting context — line up in exactly the same
+   place regardless of how long a title/pack name is. */
+.leaddash .mdp-thead, .leaddash .mdp-row{grid-template-columns:1.5fr 1fr 92px 64px;}
+.leaddash .mdp-thead{
+  display:grid;gap:10px;
+  font-size:10px;font-weight:700;color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;
+  padding:0 2px 8px;border-bottom:1px solid var(--gray-line);
+}
+.leaddash .mdp-thead span:nth-child(3){text-align:right;}
+.leaddash .mdp-thead span:nth-child(4){text-align:right;}
+.leaddash .mdp-rows{max-height:132px;overflow-y:auto;}
+.leaddash .mdp-rows .empty-note{padding:10px 2px 2px;font-size:11.5px;}
+.leaddash .mdp-row{
+  display:grid;gap:10px;align-items:center;
+  padding:9px 2px;border-bottom:1px solid var(--gray-line);
+}
+.leaddash .mdp-row:last-child{border-bottom:none;}
+.leaddash .mdp-row-click{cursor:pointer;transition:background .12s;border-radius:6px;}
+.leaddash .mdp-row-click:hover{background:var(--gray-bg);}
+.leaddash .mdp-title{font-size:12.5px;font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.leaddash .mdp-sub{font-size:11.5px;color:var(--gray-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.leaddash .mdp-when{
+  font-size:11.5px;font-weight:700;white-space:nowrap;
+  display:flex;align-items:center;justify-content:flex-end;gap:5px;
+}
+.leaddash .mdp-when.red{color:var(--red);} .leaddash .mdp-when.amber{color:var(--amber);} .leaddash .mdp-when.gray{color:var(--gray-mute);}
+.leaddash .mdp-priority{
+  justify-self:end;font-size:10.5px;font-weight:700;padding:3px 10px;border-radius:99px;
+  white-space:nowrap;background:var(--gray-bg);color:var(--gray-mute);
+}
+.leaddash .mdp-priority.p-high{background:#FDECEC;color:var(--red);}
+.leaddash .mdp-priority.p-med{background:#FFF4E0;color:var(--amber);}
+.leaddash .mdp-priority.p-low{background:var(--gray-bg);color:var(--gray-mute);}
+.leaddash .mdp-viewall{
+  margin-top:8px;padding-top:8px;border-top:1px solid var(--gray-line);
+  font-size:11.5px;font-weight:700;color:var(--blue);cursor:pointer;text-align:center;
+}
+.leaddash .mdp-viewall:hover{text-decoration:underline;}
+.leaddash .deadline-item-click{cursor:pointer;transition:background .12s;}
+.leaddash .deadline-item-click:hover{background:var(--gray-bg);}
+.leaddash .dl-when-col{margin-left:auto;text-align:right;flex-shrink:0;}
+.leaddash .dl-when-col .dl-when{margin-left:0;}
+.leaddash .dl-date{font-size:11px;color:var(--gray-mute);font-weight:600;margin-top:2px;}
+.leaddash .panel-head .view-all{cursor:pointer;}
+
+/* Team Workload panel: fixed-height card (stretches to match the My
+   Deadlines panel beside it, see .dash-extra-grid) with a scrollable
+   member list capped to 3 rows and the "View All Members" link pinned to
+   the bottom via margin-top:auto. */
+.leaddash .tw-panel{display:flex;flex-direction:column;}
+.leaddash .tw-count{
+  font-size:11.5px;font-weight:700;color:var(--gray-mute);background:var(--gray-bg);
+  padding:3px 10px;border-radius:99px;white-space:nowrap;flex-shrink:0;
+}
+.leaddash .tw-list{overflow-y:auto;overflow-x:hidden;max-height:174px;}
+.leaddash .tw-panel .mdp-viewall{margin-top:auto;}
+
+.leaddash .workload-row{margin-bottom:16px;}
+.leaddash .workload-row:last-of-type{margin-bottom:10px;}
+.leaddash .workload-top{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.leaddash .workload-top .wl-avatar{width:28px;height:28px;border-radius:50%;color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.leaddash .workload-top .wl-name{font-size:13px;font-weight:700;flex:1;}
+.leaddash .workload-top .wl-pct{font-size:12.5px;font-weight:800;}
+.leaddash .workload-bar-track{height:7px;background:var(--gray-bg);border-radius:5px;overflow:hidden;margin-left:38px;}
+.leaddash .workload-bar-fill{height:100%;border-radius:5px;}
+
+/* ===== PAGE 2: TASKLIST ===== */
+.leaddash .back-link{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--blue);cursor:pointer;margin-bottom:14px;}
+.leaddash .tl-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.leaddash .tl-head h1{font-size:30px;font-weight:800;}
+.leaddash .tl-head p{font-size:14px;color:var(--gray-mute);margin-top:4px;}
+.leaddash .tl-subline{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;}
+.leaddash .tl-sub-text{font-size:13px;color:var(--gray-mute);}
+
+/* serial-number column + inline subtask progress in task tables */
+.leaddash .sn-cell{color:var(--gray-mute);font-weight:700;font-size:13px;text-align:center;width:44px;}
+.leaddash .task-cell-progress{margin-top:9px;}
+.leaddash .task-cell-progress .progress-cell{gap:8px;}
+
+/* assign control in the task detail panel */
+.leaddash .assign-select{margin-top:10px;padding:8px 12px;font-size:13px;}
+
+.leaddash .filters-bar{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap;}
+
+.leaddash .goal-card{
+  background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);
+  padding:22px 26px;display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;
+  flex-wrap:wrap;gap:16px;
+}
+.leaddash .goal-left h2{font-size:22px;font-weight:800;margin-bottom:6px;}
+.leaddash .goal-due{font-size:12.5px;color:var(--gray-mute);display:flex;align-items:center;gap:6px;}
+.leaddash .goal-right{display:flex;align-items:center;gap:20px;width:100%;max-width:420px;flex:1;min-width:260px;}
+.leaddash .goal-bar-track{flex:1;height:8px;background:var(--gray-bg);border-radius:6px;overflow:hidden;}
+.leaddash .goal-bar-fill{height:100%;background:var(--gray-mute);border-radius:6px;}
+.leaddash .goal-frac{text-align:right;white-space:nowrap;}
+.leaddash .goal-frac .n{font-size:20px;font-weight:800;}
+.leaddash .goal-frac .p{font-size:11.5px;color:var(--gray-mute);}
+.leaddash .kebab{font-size:18px;color:var(--gray-mute);cursor:pointer;padding:0 4px;display:flex;}
+
+.leaddash .tabs-row{display:flex;gap:24px;border-bottom:1px solid var(--gray-line);margin-bottom:20px;overflow-x:auto;}
+.leaddash .tab{font-size:14.5px;font-weight:600;color:var(--gray-mute);padding:0 0 14px;cursor:pointer;display:flex;align-items:center;gap:7px;border-bottom:2px solid transparent;white-space:nowrap;}
+.leaddash .tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:700;}
+.leaddash .tab .count{font-size:11.5px;background:var(--gray-bg);color:var(--gray-mute);padding:1px 8px;border-radius:10px;}
+.leaddash .tab.active .count{background:var(--blue-soft);color:var(--blue);}
+
+.leaddash .controls-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+.leaddash .controls-left{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.leaddash .pill-toggle{font-size:13px;font-weight:600;padding:9px 16px;border-radius:30px;border:1px solid var(--gray-line);background:#fff;color:var(--ink);cursor:pointer;}
+.leaddash .pill-toggle.active{border-color:var(--blue);color:var(--blue);background:var(--blue-soft);}
+.leaddash .controls-right{display:flex;gap:8px;align-items:center;}
+.leaddash .icon-btn{width:38px;height:38px;border-radius:9px;border:1px solid var(--gray-line);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-mute);font-size:14px;}
+.leaddash .icon-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+.leaddash .table-card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);overflow-x:auto;}
+.leaddash .table-card table{min-width:1100px;}
+.leaddash table{width:100%;border-collapse:collapse;}
+.leaddash thead tr{background:#FAFBFC;}
+.leaddash th{text-align:left;font-size:12px;font-weight:700;color:var(--gray-mute);padding:15px 18px;border-bottom:1px solid var(--gray-line);}
+.leaddash td{padding:16px 18px;font-size:13.5px;border-bottom:1px solid var(--gray-line);vertical-align:top;}
+.leaddash tbody tr.task-row:hover{background:#FAFBFF;}
+.leaddash tbody tr.task-row{cursor:pointer;}
+.leaddash .task-cell .task-title{font-weight:700;font-size:14px;}
+.leaddash .task-cell .task-sub{font-size:12px;color:var(--gray-mute);margin-top:2px;}
+.leaddash .subtask-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  background:#fff;border:1px solid var(--gray-line);color:var(--ink);
+  font-size:11.5px;font-weight:600;padding:5px 10px 5px 9px;border-radius:20px;
+  margin-top:9px;cursor:pointer;transition:border-color .15s, background .15s, color .15s;
+}
+.leaddash .subtask-tag:hover{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);}
+.leaddash .subtask-tag .st-icon{color:var(--gray-mute);display:flex;}
+.leaddash .subtask-tag:hover .st-icon{color:var(--blue);}
+.leaddash .subtask-tag .st-count{background:var(--blue-soft);color:var(--blue);font-weight:800;padding:1px 7px;border-radius:10px;font-size:10.5px;}
+.leaddash .subtask-tag .chevron{transition:transform .18s ease;display:flex;color:var(--gray-mute);}
+.leaddash .subtask-tag:hover .chevron{color:var(--blue);}
+.leaddash .subtask-tag.expanded .chevron{transform:rotate(180deg);}
+.leaddash .desc-cell{color:#4A5170;max-width:260px;font-size:13px;line-height:1.4;}
+/* .assignee-cell is a <td> — keep it a real table cell (see global.css); the layout is on .assignee-cell-multi. */
+.leaddash .m-avatar{width:32px;height:32px;border-radius:50%;background:var(--blue-dark);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.leaddash .assignee-name{font-size:13.5px;font-weight:700;}
+.leaddash .assignee-role{font-size:11px;color:var(--gray-mute);}
+.leaddash .due-cell .dd{font-weight:600;}
+.leaddash .due-cell .dleft{font-size:11.5px;color:var(--gray-mute);margin-top:2px;}
+.leaddash .optional-pill{
+  font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;
+  background:#EEF0F5;color:#6B7290;margin-left:8px;vertical-align:middle;
+}
+.leaddash .badge{font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px;}
+.leaddash .badge .bdot{width:6px;height:6px;border-radius:50%;}
+.leaddash .badge-progress{background:var(--blue-soft);color:var(--blue);} .badge-progress .bdot{background:var(--blue);}
+.leaddash .badge-notstarted{background:#EEF0F5;color:#6B7290;} .badge-notstarted .bdot{background:#6B7290;}
+.leaddash .badge-overdue{background:var(--red-soft);color:var(--red);} .badge-overdue .bdot{background:var(--red);}
+.leaddash .badge-done{background:var(--green-soft);color:var(--green);} .badge-done .bdot{background:var(--green);}
+.leaddash .badge-review{background:var(--amber-soft);color:var(--amber);} .badge-review .bdot{background:var(--amber);}
+.leaddash .badge-duetoday{background:#FFF1E0;color:#C2570C;} .badge-duetoday .bdot{background:#C2570C;}
+.leaddash .badge-upcoming{background:#EEF0F5;color:#8A63D2;} .badge-upcoming .bdot{background:#8A63D2;}
+.leaddash .badge-skipped{background:#EEF0F5;color:#6B7385;} .badge-skipped .bdot{background:#9AA1B2;}
+.leaddash .badge-rejected{background:#FBE4E6;color:#C2273D;} .leaddash .badge-rejected .bdot{background:#C2273D;}
+.leaddash .priority{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.leaddash .priority .dot{width:7px;height:7px;border-radius:50%;}
+.leaddash .p-high .dot{background:var(--red);} .p-high{color:var(--red);}
+.leaddash .p-med .dot{background:var(--amber);} .p-med{color:var(--amber);}
+.leaddash .p-low .dot{background:var(--gray-mute);} .p-low{color:var(--gray-mute);}
+.leaddash .progress-cell{display:flex;align-items:center;gap:8px;}
+.leaddash .mini-bar-track{width:64px;height:6px;background:var(--gray-bg);border-radius:4px;overflow:hidden;}
+.leaddash .mini-bar-fill{height:100%;background:var(--gray-mute);border-radius:4px;}
+.leaddash .mini-bar-fill.blue{background:var(--blue);}
+.leaddash .prog-frac{font-size:11.5px;color:var(--gray-mute);font-weight:600;white-space:nowrap;}
+.leaddash .end-cell{display:flex;align-items:center;gap:14px;justify-content:flex-end;}
+
+/* toggle switch */
+.leaddash .toggle{position:relative;width:38px;height:21px;border-radius:20px;background:#DADEEA;cursor:pointer;flex-shrink:0;transition:background .15s;}
+.leaddash .toggle .knob{position:absolute;top:2px;left:2px;width:17px;height:17px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s;}
+.leaddash .toggle.on{background:var(--blue);}
+.leaddash .toggle.on .knob{left:19px;}
+.leaddash .toggle.review{background:var(--amber);}
+
+/* subtask panel rows */
+.leaddash tr.subtask-row td{background:#FBFBFD;border-bottom:1px solid var(--gray-line);}
+.leaddash .subtask-header-cell{font-size:11.5px;font-weight:700;color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;padding-top:11px;padding-bottom:11px;background:#F4F5F8;}
+.leaddash .subtask-name-cell{font-size:13.5px;font-weight:600;padding-left:34px;position:relative;}
+.leaddash .subtask-name-cell::before{content:'';position:absolute;left:18px;top:50%;width:10px;height:1px;background:var(--gray-line);}
+.leaddash .subtask-assignees{display:flex;gap:14px;flex-wrap:wrap;}
+.leaddash .subtask-assignee{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;}
+.leaddash .subtask-assignee .sa-avatar{width:24px;height:24px;border-radius:50%;background:var(--blue-dark);color:#fff;font-size:9.5px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.leaddash tr.subtask-row-click{cursor:pointer;}
+.leaddash tr.subtask-row-click:hover td{background:#F1F4FA;}
+
+/* ---- Task table pagination (shown once a view exceeds 5 rows) ---- */
+.leaddash .table-pagination{
+  position:sticky;left:0;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:12px 16px;border-top:1px solid var(--gray-line);
+  background:#fff;flex-wrap:wrap;
+}
+.leaddash .table-pagination .tp-info{font-size:12.5px;font-weight:600;color:var(--gray-mute);}
+.leaddash .table-pagination .tp-controls{display:flex;align-items:center;gap:8px;}
+.leaddash .table-pagination .tp-page{font-size:12.5px;font-weight:700;color:var(--ink);}
+.leaddash .table-pagination .tp-page-size{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12.5px;font-weight:600;color:var(--gray-mute);
+}
+.leaddash .table-pagination .tp-page-size select{
+  border:1px solid var(--gray-line);background:#fff;border-radius:8px;
+  padding:5px 8px;font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;
+  transition:border-color .12s;
+}
+.leaddash .table-pagination .tp-page-size select:hover{border-color:var(--blue);}
+.leaddash .table-pagination .tp-page-size select:focus{outline:none;border-color:var(--blue);}
+.leaddash .table-pagination .tp-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  border:1px solid var(--gray-line);background:#fff;border-radius:8px;
+  padding:6px 11px;font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;
+  transition:border-color .12s,background .12s,color .12s;
+}
+.leaddash .table-pagination .tp-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
+.leaddash .table-pagination .tp-btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ===== MODALS ===== */
+.leaddash .modal-overlay{display:flex;position:fixed;inset:0;background:rgba(16,22,42,.5);align-items:center;justify-content:center;z-index:1060;}
+/* Bootstrap ships `.modal{position:fixed;display:none;width:100%;height:100%;…}`
+   which collides with the ported samrat dialog box (same class name). Reset
+   the layout props Bootstrap forces so the dialog actually shows. */
+/* Header/footer are separate, non-scrolling flex rows and only the body
+   scrolls internally (flex-direction:column + .modal-body's own
+   overflow-y) — NOT one scrolling box with a sticky head/foot floating
+   inside it. That old layout let body content visually overlap the
+   head/foot while scrolling (both ended up "position:sticky, z-index:auto"
+   — same paint bucket as any position:relative wrapper inside the body,
+   e.g. BikramDateInput's field wrapper — so whichever was LATER in the DOM
+   painted on top, which was always the scrolled body content). Splitting
+   them into separate boxes removes the shared coordinate space entirely,
+   so no z-index juggling is needed for the header/footer themselves. */
+.leaddash .modal{
+  position:static;display:flex;flex-direction:column;inset:auto;
+  width:640px;max-width:calc(100vw - 32px);max-height:88vh;
+  overflow:hidden;
+  background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(16,22,42,.25);
+}
+.leaddash .modal.narrow{width:480px;}
+.leaddash .modal-head{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid var(--gray-line);background:#fff;flex-shrink:0;}
+.leaddash .modal-head h2{font-size:17px;font-weight:700;}
+.leaddash .modal-head p{font-size:12.5px;color:var(--gray-mute);margin-top:2px;}
+.leaddash .modal-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--gray-line);background:#fff;cursor:pointer;color:var(--gray-mute);font-size:15px;display:flex;align-items:center;justify-content:center;}
+.leaddash .modal-body{padding:22px 24px;display:flex;flex-direction:column;gap:18px;overflow-y:auto;min-height:0;}
+.leaddash .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.leaddash .form-group{display:flex;flex-direction:column;gap:7px;}
+.leaddash .form-group.full{grid-column:1/-1;}
+.leaddash .form-group label{font-size:12.5px;font-weight:700;color:var(--ink);}
+.leaddash .form-group .hint{font-size:11px;font-weight:500;color:var(--gray-mute);}
+.leaddash .field{border:1px solid var(--gray-line);border-radius:8px;padding:10px 13px;font-size:13.5px;color:var(--ink);background:#fff;font-family:inherit;width:100%;}
+.leaddash select.field{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gray-mute) 50%),linear-gradient(135deg,var(--gray-mute) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;}
+.leaddash textarea.field{resize:vertical;min-height:70px;}
+.leaddash .tif-dueday .field{max-width:150px;}
+.leaddash .tif-mode-choice{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;}
+.leaddash .tif-mode-choice input{width:15px;height:15px;flex-shrink:0;}
+.leaddash .tif-mode-choice .hint{font-weight:500;}
+.leaddash .tif-schedule-box{grid-column:1/-1;display:flex;flex-direction:column;gap:16px;padding:16px;border:1px solid var(--gray-line);border-radius:10px;background:var(--gray-bg);}
+.leaddash .tif-dow-row{display:flex;gap:6px;flex-wrap:wrap;}
+.leaddash .tif-dow-btn{padding:7px 12px;border-radius:7px;border:1px solid var(--gray-line);background:#fff;font-size:12px;font-weight:700;color:var(--gray-mute);cursor:pointer;}
+.leaddash .tif-dow-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.leaddash .tif-check-inline{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;}
+.leaddash .tif-check-inline input{width:15px;height:15px;}
+.leaddash .priority-toggle{display:flex;gap:8px;}
+.leaddash .priority-opt{flex:1;text-align:center;padding:9px 0;border-radius:8px;border:1px solid var(--gray-line);font-size:12.5px;font-weight:700;cursor:pointer;color:var(--gray-mute);}
+.leaddash .priority-opt.p-high.sel{background:var(--red-soft);border-color:var(--red);color:var(--red);}
+.leaddash .priority-opt.p-med.sel{background:var(--amber-soft);border-color:var(--amber);color:var(--amber);}
+.leaddash .priority-opt.p-low.sel{background:#EEF0F5;border-color:var(--gray-mute);color:#6B7290;}
+.leaddash .assignee-select{display:flex;gap:8px;flex-wrap:wrap;}
+.leaddash .assignee-opt{display:flex;align-items:center;gap:7px;border:1px solid var(--gray-line);border-radius:30px;padding:6px 12px 6px 6px;font-size:12.5px;font-weight:600;cursor:pointer;}
+.leaddash .assignee-opt.sel{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);}
+.leaddash .assignee-opt .sm-avatar{width:22px;height:22px;font-size:9.5px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;background:var(--blue-dark);}
+.leaddash .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:18px 24px;border-top:1px solid var(--gray-line);background:#fff;flex-shrink:0;}
+
+.leaddash .subtask-block{border:1px solid var(--gray-line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;position:relative;}
+.leaddash .subtask-block .sb-remove{position:absolute;top:10px;right:10px;font-size:12px;color:var(--red);cursor:pointer;font-weight:700;display:flex;align-items:center;gap:4px;}
+.leaddash .subtask-block .sb-title{font-size:12px;font-weight:700;color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;}
+.leaddash .add-subtask-btn{display:flex;align-items:center;gap:6px;color:var(--blue);font-size:13px;font-weight:700;border:1px dashed var(--blue);border-radius:8px;padding:10px;justify-content:center;cursor:pointer;}
+.leaddash .subtasks-wrap{display:flex;flex-direction:column;gap:12px;}
+
+/* A subtask already added to the "Add Task" form's Subtasks list — a
+   compact read-only summary row (the full scheduling form lives in the
+   Add/Edit Subtask modal, opened from the "Edit" link here). */
+.leaddash .subtask-summary-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  border:1px solid var(--gray-line);border-radius:10px;padding:10px 14px;
+}
+.leaddash .subtask-summary-main{display:flex;align-items:center;flex-wrap:wrap;gap:10px;min-width:0;}
+.leaddash .subtask-summary-title{font-size:13px;font-weight:700;color:var(--ink);}
+.leaddash .subtask-summary-actions{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+
+.leaddash .readonly-field{border:1px solid var(--gray-line);border-radius:8px;padding:10px 13px;font-size:13.5px;background:var(--gray-bg);color:var(--gray-mute);}
+.leaddash .review-context{background:var(--gray-bg);border-radius:9px;padding:12px 14px;font-size:12.5px;color:var(--gray-mute);display:flex;flex-direction:column;gap:3px;}
+
+/* entity pill in All Tasks table */
+.leaddash .entity-pill{display:flex;align-items:center;gap:8px;}
+.leaddash .entity-pill .ep-dot{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;flex-shrink:0;}
+.leaddash .entity-pill .ep-name{font-size:13px;font-weight:600;}
+/* entity pill rendered as a button — jumps to that entity's task list */
+.leaddash .entity-pill-btn{background:none;border:none;padding:4px 8px 4px 4px;margin:-4px -8px -4px -4px;font:inherit;cursor:pointer;text-align:left;border-radius:8px;transition:background .12s;}
+.leaddash .entity-pill-btn:hover{background:var(--blue-soft);}
+.leaddash .entity-pill-btn:hover .ep-name{color:var(--blue);}
+
+/* All Tasks page filter bar */
+.leaddash .at-filters{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.leaddash .at-filters select.dd-filter{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gray-mute) 50%),linear-gradient(135deg,var(--gray-mute) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px;}
+.leaddash .at-filters .search-box input, .leaddash .at-filters input.dd-filter{border:none;outline:none;font-size:13.5px;color:var(--ink);font-family:inherit;background:transparent;}
+.leaddash .at-filters input.dd-filter{border:1px solid var(--gray-line);}
+.leaddash .clear-filters{font-size:12.5px;font-weight:700;color:var(--blue);cursor:pointer;}
+
+/* pagination */
+.leaddash .pagination-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;font-size:12.5px;color:var(--gray-mute);flex-wrap:wrap;gap:10px;}
+.leaddash .page-btns{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.leaddash .page-btn{width:32px;height:32px;border-radius:7px;border:1px solid var(--gray-line);background:#fff;color:var(--ink);font-size:12.5px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.leaddash .page-btn.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.leaddash .page-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ===== TASK DETAIL SLIDE-OVER ===== */
+/* Must sit above the floating Close Bhai chat (chat.css, z-index 1040) so the chat never
+   covers the panel, yet below Bootstrap modals (1050+) and the app's own pop-ups (1200). */
+.leaddash .detail-overlay{display:block;position:fixed;inset:0;background:rgba(16,22,42,.45);z-index:1045;}
+.leaddash .detail-panel{
+  position:fixed;top:0;right:0;width:560px;max-width:100vw;height:100%;background:#fff;
+  box-shadow:-16px 0 40px rgba(16,22,42,.18);
+  display:flex;flex-direction:column;z-index:1046;overflow:hidden;
+  animation:detail-slide-in .22s ease;
+}
+@keyframes detail-slide-in{from{transform:translateX(100%);}to{transform:translateX(0);}}
+@media (max-width: 640px){ .leaddash .detail-panel{width:100vw;} }
+.leaddash .detail-head{padding:26px 28px 20px;border-bottom:1px solid var(--gray-line);position:relative;flex-shrink:0;}
+.leaddash .detail-close{position:absolute;top:24px;right:24px;width:32px;height:32px;border-radius:8px;border:1px solid var(--gray-line);background:#fff;cursor:pointer;color:var(--gray-mute);font-size:15px;display:flex;align-items:center;justify-content:center;}
+.leaddash .detail-title{font-size:23px;font-weight:800;line-height:1.25;max-width:460px;margin-bottom:14px;}
+.leaddash .detail-tags{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.leaddash .entity-chip{display:inline-flex;align-items:center;gap:5px;background:var(--blue-soft);color:var(--blue);font-size:11.5px;font-weight:800;padding:5px 11px;border-radius:6px;}
+.leaddash .detail-body{flex:1;overflow-y:auto;padding:24px 28px 100px;}
+.leaddash .detail-section{margin-bottom:26px;}
+.leaddash .detail-section h3{font-size:15px;font-weight:800;margin-bottom:10px;}
+.leaddash .detail-desc{font-size:13.5px;color:#4A5170;line-height:1.6;}
+.leaddash .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.leaddash .detail-label{font-size:12px;font-weight:700;color:var(--gray-mute);margin-bottom:10px;}
+.leaddash .detail-assignees{display:flex;flex-direction:column;gap:10px;}
+.leaddash .detail-assignee-row{display:flex;align-items:center;gap:10px;}
+.leaddash .multi-assign-editor{border:1px solid var(--gray-line);border-radius:9px;padding:10px;background:#fafbfc;}
+.leaddash .multi-assign-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
+.leaddash .multi-assign-opt{display:flex;align-items:center;gap:8px;padding:5px 4px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;border-radius:6px;}
+.leaddash .multi-assign-opt:hover{background:var(--gray-bg);}
+.leaddash .multi-assign-opt input{cursor:pointer;}
+.leaddash .detail-dates .dd{font-size:14px;font-weight:700;text-align:right;}
+.leaddash .detail-dates .dleft{font-size:11.5px;color:var(--gray-mute);text-align:right;margin-top:2px;}
+.leaddash .detail-dates{text-align:right;}
+.leaddash .detail-progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.leaddash .detail-progress-row b{font-size:13px;}
+.leaddash .section-head-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.leaddash .link-btn{font-size:12.5px;font-weight:700;color:var(--blue);cursor:pointer;border:none;background:none;}
+
+.leaddash .subtask-card{border:1px solid var(--gray-line);border-radius:12px;padding:16px;margin-bottom:12px;}
+.leaddash .subtask-card .st-title{font-size:14.5px;font-weight:700;margin-bottom:4px;}
+.leaddash .subtask-card .st-desc{font-size:12px;color:var(--gray-mute);line-height:1.5;margin-bottom:12px;}
+.leaddash .subtask-card .st-assignee-label{font-size:11px;font-weight:700;color:var(--gray-mute);margin-bottom:8px;}
+.leaddash .st-assignee-list{display:flex;flex-direction:column;gap:10px;}
+.leaddash .st-assignee-item{display:flex;align-items:center;gap:10px;}
+.leaddash .st-assignee-item .sai-name{font-size:13.5px;font-weight:700;flex:1;}
+.leaddash .st-assignee-item .sai-status{font-size:10.5px;color:var(--green);font-weight:700;}
+.leaddash .st-assignee-item .sai-due{font-size:12px;text-align:right;}
+.leaddash .st-assignee-item .sai-dleft{font-size:11px;color:var(--gray-mute);text-align:right;}
+
+.leaddash .add-subtask-inline{border:1.5px dashed var(--gray-line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+
+/* ---- Detail panel: clean assignee + assignment controls ---- */
+.leaddash .assignee-chip-row{display:flex;flex-direction:column;gap:9px;}
+.leaddash .assignee-chip{display:flex;align-items:center;gap:9px;}
+.leaddash .assignee-chip .ac-meta{flex:1;min-width:0;}
+.leaddash .assignee-chip .ac-name{font-size:13px;font-weight:700;color:var(--ink);}
+.leaddash .assignee-chip .ac-status{font-size:11px;color:var(--gray-mute);font-weight:600;margin-top:1px;}
+.leaddash .assignee-chip .ac-status.done{color:var(--green);}
+.leaddash .assignee-note{font-size:11.5px;color:var(--gray-mute);margin:3px 0 2px 35px;line-height:1.45;}
+.leaddash .assignee-note b{color:var(--ink);font-weight:700;}
+.leaddash .assign-controls{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+.leaddash .assign-controls .assign-single{display:flex;flex-direction:column;gap:6px;}
+.leaddash .assign-controls .assign-single .hint{font-size:11.5px;font-weight:700;color:var(--gray-mute);}
+.leaddash .assign-links{display:flex;gap:16px;flex-wrap:wrap;align-items:center;}
+
+/* ---- Subtask card: tidy status row + 2-col meta grid ---- */
+.leaddash .subtask-card .st-status-row{display:flex;align-items:center;gap:10px;margin:10px 0 6px;flex-wrap:wrap;}
+.leaddash .subtask-card .st-meta{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--gray-line);}
+.leaddash .subtask-card .st-meta-block .detail-label{margin-bottom:7px;}
+.leaddash .subtask-card .st-meta-right{text-align:left;}
+.leaddash .subtask-card .st-meta-right .dd{font-size:13.5px;font-weight:700;}
+@media (max-width: 640px){ .leaddash .subtask-card .st-meta{grid-template-columns:1fr;} }
+
+/* Lead completing their own assigned task/sub-task — a toggle + inline
+   time/notes form, matching the Team Member completion pattern. */
+.leaddash .mine-complete-block{margin-top:14px;padding:12px 14px;border:1px solid var(--gray-line);border-radius:10px;background:#FBFCFE;}
+.leaddash .mine-complete-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.leaddash .mine-complete-row .detail-label{margin:0;}
+
+.leaddash .comment-item{display:flex;gap:10px;margin-bottom:18px;}
+.leaddash .comment-item .c-avatar{width:30px;height:30px;border-radius:50%;background:var(--blue-dark);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.leaddash .comment-item .c-body{display:flex;flex-direction:column;align-items:flex-start;}
+.leaddash .comment-item .c-name{font-size:13px;font-weight:700;}
+.leaddash .comment-item .c-bubble{background:var(--blue-soft);border-radius:0 10px 10px 10px;padding:9px 13px;font-size:13px;color:var(--ink);margin-top:5px;display:inline-block;}
+.leaddash .comment-item .c-meta{display:flex;align-items:center;gap:12px;margin-top:5px;}
+.leaddash .comment-item .c-reply{font-size:11.5px;color:var(--gray-mute);font-weight:700;cursor:pointer;}
+.leaddash .comment-item .c-time{font-size:11px;color:var(--gray-mute);font-weight:500;}
+
+/* multiple assignees shown in a task table cell */
+.leaddash .assignee-cell-multi{display:flex;align-items:center;gap:10px;}
+.leaddash .assignee-cell-multi .avatar-stack .m-avatar{width:26px;height:26px;font-size:9.5px;}
+.leaddash .empty-note{font-size:12.5px;color:var(--gray-mute);padding:6px 0;}
+
+.leaddash .detail-footer{position:absolute;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--gray-line);padding:14px 28px;display:flex;gap:10px;}
+.leaddash .detail-footer input{flex:1;border:1px solid var(--gray-line);border-radius:9px;padding:10px 14px;font-size:13px;font-family:inherit;}
+
+/* attachments / dropzone (were referenced by the mockup but not styled there) */
+.leaddash .dropzone{border:1.5px dashed var(--gray-line);border-radius:12px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-size:12.5px;color:var(--gray-mute);cursor:pointer;transition:border-color .15s, background .15s;}
+.leaddash .dropzone:hover{border-color:var(--blue);background:var(--blue-soft);}
+.leaddash .dz-icon{color:var(--gray-mute);display:flex;}
+.leaddash .attach-list{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.leaddash .attach-item{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid var(--gray-line);border-radius:9px;padding:10px 12px;font-size:12.5px;}
+.leaddash .attach-item .fname{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--ink);}
+.leaddash .attach-item .ficon{width:30px;height:22px;border-radius:5px;background:var(--blue-soft);color:var(--blue);font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.leaddash .attach-item .fsize{display:flex;align-items:center;gap:8px;color:var(--gray-mute);white-space:nowrap;}
+.leaddash .attach-item .attach-remove{cursor:pointer;color:var(--gray-mute);display:flex;}
+.leaddash .attach-item .attach-remove:hover{color:var(--red);}
+
+/* ===== PACKS (dashboard primary item + pack workspace) ===== */
+.leaddash .status-unassigned{background:#EEF0F5;color:#6B7290;}
+
+.leaddash .lead-inline{display:inline-flex;align-items:center;gap:6px;font-weight:700;}
+.leaddash .lead-unassigned{color:var(--gray-mute);font-weight:700;font-size:12px;}
+
+/* Team-Lead chip on the pack card: round white avatar + name */
+.leaddash .lead-chip{display:inline-flex;align-items:center;gap:8px;font-weight:700;}
+.leaddash .lead-chip .lead-chip-avatar{
+  width:24px;height:24px;border-radius:50%;
+  background:#fff;border:1px solid var(--gray-line);
+  box-shadow:0 1px 2px rgba(16,22,42,.06);
+  display:flex;align-items:center;justify-content:center;
+  font-size:9.5px;font-weight:800;line-height:1;
+  flex-shrink:0;text-transform:uppercase;
+}
+.leaddash .lead-chip .lead-chip-name{font-size:13px;font-weight:700;color:var(--ink);}
+
+.leaddash .pack-info-card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);padding:22px 24px;margin-bottom:26px;}
+.leaddash .pack-info-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;margin-bottom:16px;}
+.leaddash .pack-info-desc{font-size:13.5px;color:#4A5170;line-height:1.6;max-width:760px;}
+.leaddash .pack-meta-row{display:flex;gap:34px;flex-wrap:wrap;margin-top:16px;}
+.leaddash .pack-meta-item .k{font-size:11px;font-weight:700;color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;}
+.leaddash .pack-meta-item .v{font-size:18px;font-weight:800;margin-top:3px;}
+
+.leaddash .detail-section-block{margin-bottom:30px;}
+.leaddash .section-title{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.leaddash .section-count{font-size:11.5px;font-weight:700;background:var(--gray-bg);color:var(--gray-mute);padding:2px 9px;border-radius:10px;}
+
+.leaddash .lead-pill{display:inline-flex;align-items:center;gap:11px;border:1px solid var(--gray-line);border-radius:12px;padding:12px 18px 12px 12px;background:#fff;}
+
+.leaddash .team-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.leaddash .team-member-card{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--gray-line);border-radius:10px;padding:12px 14px;}
+.leaddash .team-member-card .tm-count{margin-left:auto;font-size:12px;font-weight:700;color:var(--gray-mute);white-space:nowrap;}
+
+/* placeholder page */
+.leaddash .placeholder-wrap{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);padding:60px 24px;text-align:center;color:var(--gray-mute);}
+.leaddash .placeholder-wrap h1{font-size:22px;font-weight:800;color:var(--ink);margin-bottom:8px;}
+.leaddash .placeholder-wrap p{font-size:13.5px;}
+
+/* ===== periods, view-only, rejection ===== */
+.leaddash .page-head h1 .period-badge{display:inline-block;vertical-align:middle;margin-left:10px;font-size:12px;font-weight:700;color:var(--blue);background:var(--blue-soft);padding:4px 10px;border-radius:20px;}
+.leaddash .period-select{padding:0 12px;gap:8px;}
+.leaddash .period-select select{border:none;outline:none;background:transparent;font:inherit;font-weight:600;color:var(--ink);cursor:pointer;padding:9px 0;}
+.leaddash .view-only-tag{background:#EEF0F5;color:#6B7290;}
+.leaddash .readonly-banner{background:var(--amber-soft);color:var(--amber);border-radius:9px;padding:11px 14px;font-size:12.5px;font-weight:600;margin-bottom:18px;}
+.leaddash .reject-banner{background:var(--red-soft);color:var(--red);border-radius:9px;padding:11px 14px;font-size:12.5px;line-height:1.5;margin-bottom:18px;}
+.leaddash .btn-reject{border-color:var(--red);color:var(--red);background:#fff;}
+.leaddash .btn-reject:hover{background:var(--red-soft);}
+.leaddash .field-error{color:var(--red);font-size:11.5px;font-weight:600;margin-top:5px;}
+
+/* row action (kebab) menu in the task table */
+.leaddash .kebab-wrap{position:relative;display:flex;}
+.kebab-menu{
+  position:fixed;z-index:1200;min-width:172px;
+  background:#fff;border:1px solid var(--gray-line);border-radius:10px;
+  box-shadow:0 12px 32px rgba(16,22,42,.16);padding:6px;
+}
+.kebab-menu button{
+  display:flex;width:100%;align-items:center;gap:8px;
+  padding:9px 11px;font-size:13px;font-weight:600;color:var(--ink);
+  background:none;border:none;border-radius:7px;cursor:pointer;text-align:left;
+}
+.kebab-menu button:hover{background:var(--gray-bg);}
+.kebab-menu button.danger{color:var(--red);}
+.kebab-menu button.btn-primary-menu{color:var(--blue);}
+.kebab-menu .km-confirm{padding:8px 11px 4px;font-size:12px;font-weight:700;color:var(--gray-mute);}
+
+/* ===================================================================
+   Readability tuning — Inter + a slightly larger, more comfortable type
+   scale than the original single-file mockup. Kept as an override block
+   so the ported base above stays 1:1 with frontend_samrat.
+   =================================================================== */
+.leaddash{
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  font-size:15px;
+  line-height:1.5;
+  letter-spacing:-0.1px;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* page headers */
+.leaddash .page-head h1{font-size:31px;}
+.leaddash .page-head p{font-size:14.5px;}
+.leaddash .tl-head h1{font-size:33px;}
+.leaddash .tl-head p{font-size:14.5px;}
+.leaddash .back-link{font-size:13px;}
+.leaddash .page-head h1 .period-badge{font-size:12.5px;}
+
+/* dashboard cards */
+.leaddash .team-progress-card h3{font-size:15.5px;}
+.leaddash .team-progress-card .pct{font-size:28px;}
+.leaddash .card-sub{font-size:12.5px;}
+.leaddash .stat-card .num{font-size:30px;}
+.leaddash .stat-card .lbl{font-size:13px;}
+
+/* deadlines + workload panels */
+.leaddash .panel-head h3{font-size:16px;}
+.leaddash .panel-sub{font-size:12px;}
+.leaddash .dl-title{font-size:14px;}
+.leaddash .dl-sub{font-size:12px;}
+.leaddash .dl-when{font-size:12.5px;}
+.leaddash .workload-top .wl-name{font-size:13.5px;}
+.leaddash .workload-top .wl-pct{font-size:13px;}
+
+/* filter row */
+.leaddash .search-box,.leaddash .search-box input{font-size:13.5px;}
+.leaddash .dd-filter{font-size:14px;}
+.leaddash .chip-filter{font-size:13.5px;}
+
+/* pack cards */
+.leaddash .entity-name{font-size:15.5px;}
+.leaddash .entity-period{font-size:12.5px;}
+.leaddash .period-progress-row span{font-size:12.5px;}
+.leaddash .status-tag{font-size:11.5px;}
+
+/* pack workspace */
+.leaddash .section-title{font-size:17px;}
+.leaddash .pack-info-desc{font-size:14px;}
+.leaddash .pack-meta-item .k{font-size:11.5px;}
+.leaddash .pack-meta-item .v{font-size:20px;}
+.leaddash .lead-pill .assignee-name{font-size:14px;}
+
+/* tables */
+.leaddash th{font-size:12.5px;}
+.leaddash td{font-size:14px;}
+.leaddash .task-cell .task-title{font-size:15px;}
+.leaddash .task-cell .task-sub{font-size:12.5px;}
+.leaddash .desc-cell{font-size:13.5px;}
+.leaddash .assignee-name{font-size:14px;}
+.leaddash .badge{font-size:12px;}
+.leaddash .priority{font-size:13.5px;}
+.leaddash .tabs-row .tab{font-size:15px;}
+
+/* task detail slide-over */
+.leaddash .detail-title{font-size:25px;}
+.leaddash .detail-section h3{font-size:15.5px;}
+.leaddash .detail-desc{font-size:14px;}
+.leaddash .detail-label{font-size:12px;}
+.leaddash .subtask-card .st-title{font-size:15px;}
+.leaddash .comment-item .c-bubble{font-size:13.5px;}
+
+/* modals */
+.leaddash .modal-head h2{font-size:18px;}
+.leaddash .form-group label{font-size:13px;}
+.leaddash .field{font-size:14px;}
+.leaddash .btn{font-size:14px;}
+
+/* ============================================================
+   Super Admin — Dashboard / Pack Detail / Close Packs
+   (ported from Frontend_0323)
+   ============================================================ */
+.leaddash .status-unassigned{background:#EEF0F5;color:#6B7290;}
+.leaddash .btn-reject{border-color:var(--red);color:var(--red);background:#fff;}
+.leaddash .btn-reject:hover{background:var(--red-soft);}
+.leaddash .field-error{color:var(--red);font-size:11.5px;font-weight:600;margin-top:5px;}
+
+.leaddash .admin-title-row{display:flex;align-items:center;gap:10px;}
+.leaddash .admin-title-row h1{margin:0;}
+
+.leaddash .panel-head-icon-title{display:flex;align-items:center;gap:8px;}
+
+.leaddash .admin-stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;}
+/* Bootstrap's own `.card` forces flex-direction:column — pin it back to a
+   row so the icon sits beside the number, left-aligned. */
+.leaddash .admin-stat-card{display:flex;flex-direction:row;align-items:center;justify-content:flex-start;text-align:left;gap:15px;padding:18px 20px;}
+.leaddash .admin-stat-card .asc-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--gray-bg);color:var(--gray-mute);}
+.leaddash .admin-stat-card > div:last-child{display:flex;flex-direction:column;min-width:0;}
+.leaddash .admin-stat-card.total .asc-icon{background:var(--blue-soft);color:var(--blue);}
+.leaddash .admin-stat-card.inprogress .asc-icon{background:var(--blue-soft);color:var(--blue);}
+.leaddash .admin-stat-card.closed .asc-icon{background:var(--green-soft);color:var(--green);}
+.leaddash .admin-stat-card.overdue .asc-icon{background:var(--red-soft);color:var(--red);}
+.leaddash .admin-stat-card .asc-lbl{font-size:11px;font-weight:700;color:var(--gray-mute);letter-spacing:.4px;text-transform:uppercase;line-height:1.3;}
+.leaddash .admin-stat-card .asc-num{font-size:26px;font-weight:800;line-height:1.1;margin-top:4px;color:var(--ink);}
+
+.leaddash .admin-body-grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:18px;align-items:start;}
+@media (max-width: 1024px){ .leaddash .admin-body-grid{grid-template-columns:1fr;} }
+
+.leaddash .admin-plans-list{display:flex;flex-direction:column;}
+.leaddash .admin-plan-row{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:15px 0;border-bottom:1px solid var(--gray-line);cursor:pointer;flex-wrap:wrap;}
+.leaddash .admin-plan-row:last-child{border-bottom:none;}
+.leaddash .admin-plan-row:first-child{padding-top:4px;}
+.leaddash .admin-plan-row:hover .admin-plan-name{color:var(--blue);}
+.leaddash .admin-plan-row > div:first-child{min-width:0;flex:1 1 260px;}
+.leaddash .admin-plan-name{font-size:14.5px;font-weight:700;color:var(--ink);}
+.leaddash .admin-plan-meta{font-size:12px;color:var(--gray-mute);margin-top:4px;line-height:1.7;}
+.leaddash .admin-plan-meta .lead-inline{font-weight:600;color:var(--ink);gap:5px;vertical-align:middle;}
+.leaddash .admin-plan-meta .admin-lead-avatar{width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:7.5px;font-weight:800;flex-shrink:0;text-transform:uppercase;}
+.leaddash .admin-plan-progress{display:flex;align-items:center;gap:18px;flex-shrink:0;}
+.leaddash .admin-plan-progress .app-track{width:150px;}
+.leaddash .admin-plan-progress .app-label{font-size:11px;font-weight:600;color:var(--gray-mute);display:flex;justify-content:space-between;gap:10px;margin-bottom:5px;}
+.leaddash .admin-plan-progress .app-label span:last-child{color:var(--ink);font-weight:700;}
+.leaddash .admin-status-btn{border:none;font-size:11.5px;font-weight:700;padding:8px 15px;border-radius:8px;cursor:pointer;white-space:nowrap;}
+
+.leaddash .admin-team-panel .atp-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-line);font-size:13.5px;color:var(--gray-mute);font-weight:600;}
+.leaddash .admin-team-panel .atp-row:last-of-type{border-bottom:none;}
+.leaddash .admin-team-panel .atp-row b{font-size:15px;color:var(--ink);}
+.leaddash .admin-manage-btn{width:100%;justify-content:center;margin-top:14px;}
+
+.leaddash .admin-pack-badges{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.leaddash .pack-badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:6px;background:var(--gray-bg);color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;}
+.leaddash .pack-badge.code{color:#fff;}
+.leaddash .pack-badge-due{font-size:12.5px;color:var(--gray-mute);}
+
+.leaddash .admin-pack-status-col{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0;}
+.leaddash .admin-pack-progress{display:flex;align-items:center;gap:10px;}
+.leaddash .admin-pack-progress .bar-track{width:140px;}
+.leaddash .admin-pack-progress span{font-size:12px;color:var(--gray-mute);font-weight:600;white-space:nowrap;}
+
+.leaddash .admin-assign-whole{margin-top:18px;max-width:280px;}
+
+.leaddash .admin-task-list{display:flex;flex-direction:column;gap:12px;}
+.leaddash .admin-task-card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);padding:16px 20px;cursor:pointer;}
+.leaddash .admin-task-row-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.leaddash .admin-task-name{font-size:14.5px;font-weight:700;}
+.leaddash .admin-task-meta{font-size:12.5px;color:var(--gray-mute);margin-top:3px;}
+.leaddash .admin-task-right{display:flex;align-items:center;gap:14px;}
+.leaddash .admin-task-right .mini-bar-track{width:70px;}
+.leaddash .admin-task-chevron{color:var(--gray-mute);display:flex;transition:transform .18s ease;}
+.leaddash .admin-task-chevron.open{transform:rotate(180deg);}
+
+/* ===== ADMIN — USERS PAGE ===== */
+.leaddash .users-table-card{background:#fff;border:1px solid var(--gray-line);border-radius:var(--radius);overflow-x:auto;}
+.leaddash .users-table-card table{width:100%;border-collapse:collapse;min-width:820px;}
+.leaddash .users-table-card thead tr{background:#FAFBFC;}
+.leaddash .users-table-card th{text-align:left;font-size:11.5px;font-weight:700;color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;padding:13px 18px;border-bottom:1px solid var(--gray-line);white-space:nowrap;}
+.leaddash .users-table-card td{padding:13px 18px;font-size:13.5px;border-bottom:1px solid var(--gray-line);vertical-align:middle;color:var(--ink);}
+.leaddash .users-table-card tbody tr:last-child td{border-bottom:none;}
+.leaddash .users-table-card tbody tr:hover{background:#FAFBFF;}
+.leaddash .users-table-card tbody tr.row-click{cursor:pointer;}
+.leaddash .users-empty{text-align:center;color:var(--gray-mute);padding:34px 18px;}
+.leaddash .user-cell{display:flex;align-items:center;gap:11px;}
+.leaddash .user-cell .u-avatar{width:34px;height:34px;border-radius:50%;color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;text-transform:uppercase;}
+.leaddash .user-cell .u-name{font-size:13.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;}
+.leaddash .user-cell .u-you{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--blue);background:var(--blue-soft);padding:2px 6px;border-radius:6px;}
+.leaddash .user-cell .u-email{font-size:12px;color:var(--gray-mute);margin-top:2px;}
+.leaddash .users-table-card .u-muted{font-size:12.5px;color:var(--gray-mute);}
+.leaddash .role-pill{display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;padding:4px 10px;border-radius:20px;white-space:nowrap;background:var(--gray-bg);color:var(--gray-mute);}
+.leaddash .role-pill.role-pill-owner{background:#1A2F6B;color:#fff;}
+.leaddash .role-pill.role-pill-admin{background:var(--red-soft);color:var(--red);}
+.leaddash .role-pill.role-pill-lead{background:var(--blue-soft);color:var(--blue);}
+.leaddash .role-pill.role-pill-member{background:var(--green-soft);color:var(--green);}
+.leaddash .u-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
+.leaddash .u-action-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:6px 11px;border-radius:8px;border:1px solid var(--gray-line);background:#fff;color:var(--ink);cursor:pointer;transition:border-color .12s,background .12s,color .12s;}
+.leaddash .u-action-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft);}
+.leaddash .u-action-btn.u-action-danger{color:var(--gray-mute);padding:6px 9px;}
+.leaddash .u-action-btn.u-action-danger:hover{border-color:var(--red);color:var(--red);background:var(--red-soft);}
+
+.leaddash .admin-task-detail{border-top:1px solid var(--gray-line);margin-top:14px;padding-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:16px;cursor:default;}
+.leaddash .admin-task-detail .full{grid-column:1/-1;}
+.leaddash .admin-task-detail .k{font-size:11px;font-weight:700;color:var(--gray-mute);text-transform:uppercase;letter-spacing:.3px;margin-bottom:6px;}
+.leaddash .admin-task-detail .v{font-size:13.5px;color:var(--ink);}
+
+.leaddash .closepacks-layout{display:grid;grid-template-columns:272px minmax(0,1fr);gap:20px;align-items:start;}
+@media (max-width: 900px){ .leaddash .closepacks-layout{grid-template-columns:1fr;} }
+.leaddash .closepacks-layout > .panel-card:first-child{position:sticky;top:20px;}
+
+.leaddash .closepack-list{display:flex;flex-direction:column;gap:8px;}
+.leaddash .closepack-list-item{display:flex;flex-direction:column;gap:8px;text-align:left;width:100%;border:1px solid var(--gray-line);border-radius:10px;padding:13px 14px;background:#fff;cursor:pointer;font:inherit;transition:border-color .12s,background .12s,box-shadow .12s;}
+.leaddash .closepack-list-item:hover{border-color:var(--blue);background:#FAFBFF;}
+.leaddash .cli-name{font-size:14px;font-weight:700;color:var(--ink);}
+.leaddash .cli-badges{display:flex;gap:6px;flex-wrap:wrap;}
+
+.leaddash .pack-badge.status.active{background:var(--green-soft);color:var(--green);text-transform:none;}
+.leaddash .pack-badge.status.inactive{background:#EEF0F5;color:#6B7290;text-transform:none;}
+.leaddash .pack-badge.version{background:var(--gray-bg);border:1px solid var(--gray-line);color:var(--gray-mute);text-transform:none;}
+.leaddash .pack-badge.cal-ad{background:var(--blue-soft);color:var(--blue);text-transform:none;}
+.leaddash .pack-badge.cal-bs{background:#FDECC8;color:#B9770E;text-transform:none;}
+
+.leaddash .closepack-list-item.selected{background:var(--blue-soft);border-color:var(--blue);box-shadow:inset 3px 0 0 var(--blue);}
+.leaddash .closepack-list-item.selected .cli-name{color:var(--blue-dark);}
+.leaddash .closepack-list-item.selected .pack-badge{background:#fff;color:var(--blue);border:1px solid transparent;}
+
+.leaddash .pack-info-card h1{font-size:23px;font-weight:800;line-height:1.25;margin:0;}
+.leaddash .pack-info-card .admin-pack-badges{margin-top:9px;}
+
+.leaddash .pack-detail-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.leaddash .pack-version-text{font-size:12.5px;color:var(--gray-mute);font-weight:600;}
+.leaddash .icon-btn-red{border-color:var(--red);color:var(--red);}
+.leaddash .icon-btn-red:hover{background:var(--red-soft);}
+
+.leaddash .btn-outline-blue{border:1px solid var(--blue);color:var(--blue);background:#fff;}
+.leaddash .btn-outline-blue:hover{background:var(--blue-soft);}
+.leaddash .btn-outline-red{border:1px solid var(--red);color:var(--red);background:#fff;}
+.leaddash .btn-outline-red:hover{background:var(--red-soft);}
+
+.leaddash .template-structure-list{display:flex;flex-direction:column;}
+.leaddash .task-template-block{border-bottom:1px solid var(--gray-line);}
+.leaddash .task-template-block:last-child{border-bottom:none;}
+.leaddash .task-template-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:background .12s;}
+.leaddash .task-template-header:hover{background:var(--gray-bg);}
+.leaddash .task-template-header.expanded{background:var(--blue-soft);}
+.leaddash .task-template-name{font-size:14.5px;font-weight:700;color:var(--ink);}
+.leaddash .task-template-header.expanded .task-template-name{color:var(--blue-dark);}
+.leaddash .task-template-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.leaddash .due-day-pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--gray-bg);border:1px solid var(--gray-line);color:var(--gray-mute);white-space:nowrap;text-transform:uppercase;letter-spacing:.3px;}
+.leaddash .due-day-pill.freq-pill{display:inline-flex;align-items:center;gap:4px;background:var(--blue-soft);border-color:transparent;color:var(--blue);text-transform:none;letter-spacing:0;}
+.leaddash .task-template-header.expanded .due-day-pill{background:#fff;border-color:transparent;}
+.leaddash .task-template-chevron{color:var(--gray-mute);display:flex;transition:transform .18s ease;}
+.leaddash .task-template-chevron.open{transform:rotate(180deg);}
+
+.leaddash .task-template-body{padding:4px 18px 18px;}
+.leaddash .task-template-desc{font-size:13px;color:#4A5170;line-height:1.6;margin-bottom:14px;}
+
+/* Expanded task: a compact action bar — primary "add sub-task" beside a
+   quiet "delete task" so they don't both shout. */
+.leaddash .task-template-actions{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.leaddash .task-template-actions .btn{font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:8px;line-height:1;}
+.leaddash .task-template-actions .btn-outline-red{border-color:transparent;background:transparent;color:var(--red);padding:7px 10px;}
+.leaddash .task-template-actions .btn-outline-red:hover{background:var(--red-soft);border-color:transparent;}
+
+.leaddash .subtask-template-list{display:flex;flex-direction:column;gap:8px;}
+.leaddash .subtask-template-card{border:1px solid var(--gray-line);border-radius:10px;padding:12px 14px;background:#fff;}
+.leaddash .subtask-template-top{display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.leaddash .subtask-template-name{font-size:13.5px;font-weight:700;}
+.leaddash .subtask-template-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.leaddash .subtask-template-card .due-day-pill{font-size:10px;padding:3px 9px;}
+.leaddash .subtask-template-desc{font-size:12px;color:var(--gray-mute);line-height:1.5;margin-top:5px;}
+.leaddash .icon-del-btn{width:28px;height:28px;border-radius:7px;border:1px solid transparent;background:transparent;color:var(--gray-mute);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .12s,color .12s;}
+.leaddash .icon-del-btn:hover{background:var(--red-soft);color:var(--red);}
+
+.leaddash .pack-status-toggle-row{display:flex;align-items:center;gap:10px;padding-top:8px;}
+.leaddash .pack-status-toggle-row span{font-size:13px;font-weight:600;color:var(--ink);}
+
+/* ===================================================================
+   Task-list upgrades — toggle states, one-click approve/reopen, the
+   left-aligned tag filter, and the "Edit subtasks" modal.
+   =================================================================== */
+
+/* toggle — slightly larger hit target + a disabled (view-only) state */
+.leaddash .end-cell .toggle{width:40px;height:22px;}
+.leaddash .end-cell .toggle .knob{width:18px;height:18px;}
+.leaddash .end-cell .toggle.on .knob{left:20px;}
+.leaddash .toggle.disabled{opacity:.4;cursor:default;}
+.leaddash .toggle.disabled .knob{box-shadow:0 1px 2px rgba(0,0,0,.18);}
+.leaddash .toggle:not(.disabled):hover{filter:brightness(.97);}
+
+/* end-of-row action cluster: [reject] [toggle] [⋮] */
+.leaddash .end-cell{gap:10px;}
+.leaddash .row-reject-btn{
+  width:27px;height:22px;border-radius:7px;
+  border:1px solid var(--gray-line);background:#fff;color:var(--gray-mute);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  flex-shrink:0;transition:border-color .12s,color .12s,background .12s;
+}
+.leaddash .row-reject-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-soft);}
+
+/* subtle row polish */
+.leaddash tbody tr.task-row{transition:background .12s;}
+.leaddash .subtask-tag{box-shadow:0 1px 2px rgba(16,22,42,.04);}
+
+/* ---- Tasks toolbar: status tabs on the left, tag filter aligned right ---- */
+.leaddash .tasklist-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;margin-bottom:16px;border-bottom:1px solid var(--gray-line);
+}
+.leaddash .tasklist-toolbar .tabs-row{
+  margin-bottom:0;border-bottom:none;flex:1 1 auto;min-width:0;
+}
+.leaddash .tasklist-toolbar .tabs-row .tab{padding-bottom:12px;}
+.leaddash .tasklist-filters{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+  /* lift so the control's centre lines up with the tab labels, not the
+     tab row's bottom border */
+  margin-bottom:12px;
+}
+.leaddash .tasklist-filters .task-search-box{
+  width:200px;height:34px;padding:0 12px;box-sizing:border-box;
+}
+.leaddash .tasklist-filters .tag-filter-select{
+  display:inline-flex;align-items:center;gap:7px;color:var(--gray-mute);
+  border:1px solid var(--gray-line);border-radius:9px;background:#fff;
+  padding:0 8px 0 11px;height:34px;transition:border-color .12s,box-shadow .12s;
+}
+.leaddash .tasklist-filters .tag-filter-select:hover{border-color:var(--blue);}
+.leaddash .tasklist-filters .tag-filter-select:focus-within{
+  border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft);
+}
+.leaddash .tasklist-filters .tag-filter-select select{
+  border:none;outline:none;background:transparent;font:inherit;
+  font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer;
+  padding:8px 22px 8px 0;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--gray-mute) 50%),
+                  linear-gradient(135deg,var(--gray-mute) 50%,transparent 50%);
+  background-position:calc(100% - 13px) 55%,calc(100% - 8px) 55%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+.leaddash button.clear-filters{border:none;background:none;padding:6px 4px;font:inherit;}
+
+/* pack summary — "Tasks completed  N / M" */
+.leaddash .pack-meta-item .v-sub{font-size:13px;font-weight:600;color:var(--gray-mute);margin-left:5px;}
+.leaddash .pack-meta-row{gap:44px;}
+
+/* ---- Edit Subtasks modal ---- */
+.leaddash .subtask-edit-card{
+  border:1px solid var(--gray-line);border-radius:12px;padding:16px;
+  display:flex;flex-direction:column;gap:12px;background:#fff;
+}
+.leaddash .subtask-edit-card .sec-top{display:flex;align-items:center;gap:10px;}
+.leaddash .subtask-edit-card .sec-index{
+  width:22px;height:22px;border-radius:6px;background:var(--blue-soft);color:var(--blue);
+  font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.leaddash .subtask-edit-card .sec-tmpl{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;
+  color:var(--gray-mute);background:var(--gray-bg);padding:3px 8px;border-radius:6px;
+}
+.leaddash .sec-assignee-field{display:flex;align-items:center;gap:8px;}
+.leaddash .sec-assignee-field .sm-avatar{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;
+}
+.leaddash .sec-assignee-field select{flex:1;}
+
+/* ===================================================================
+   Subtask card & completion UI — visual upscale (shared by the Team
+   Member "task overview" panel and the Team Lead task detail panel).
+   Purely cosmetic: spacing, radius, colour, hierarchy.
+   =================================================================== */
+.leaddash .detail-section > h3{
+  display:flex;align-items:center;gap:8px;
+  font-size:15.5px;font-weight:800;letter-spacing:-.1px;
+}
+
+.leaddash .subtask-card{
+  border:1px solid var(--gray-line);
+  border-radius:14px;
+  padding:18px 18px 15px;
+  margin-bottom:14px;
+  background:linear-gradient(180deg,#fcfdff 0%,#fafbfe 100%);
+  transition:border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+.leaddash .subtask-card:hover{
+  border-color:#cfd8ec;
+  box-shadow:0 6px 20px rgba(16,22,42,.07);
+}
+.leaddash .subtask-card .section-head-row{
+  align-items:flex-start;margin-bottom:6px;
+}
+.leaddash .subtask-card .st-title{
+  font-size:15px;font-weight:750;letter-spacing:-.15px;line-height:1.35;margin-bottom:5px;
+}
+.leaddash .subtask-card .st-desc{
+  font-size:12.75px;color:#5b6272;line-height:1.55;margin-bottom:2px;
+}
+.leaddash .subtask-card .st-status-row{
+  align-items:center;gap:10px;margin:12px 0 2px;
+}
+.leaddash .subtask-card .st-meta{
+  margin-top:15px;padding-top:15px;border-top:1px solid var(--gray-line);
+  gap:18px;
+}
+.leaddash .subtask-card .st-meta .detail-label{
+  font-size:11px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;
+}
+.leaddash .subtask-card .assignee-chip .ac-name{font-size:12.75px;}
+.leaddash .subtask-card .st-meta-right .dleft{
+  font-size:11.5px;color:var(--gray-mute);font-weight:600;margin-top:3px;
+}
+.leaddash .subtask-card .assignee-note{
+  margin:8px 0 0;padding:9px 11px;border-radius:9px;
+  background:var(--gray-bg);color:#5b6272;font-size:12px;line-height:1.5;
+}
+.leaddash .subtask-card .reject-banner{
+  font-size:12px;border-radius:9px;padding:9px 11px;margin-top:8px;
+}
+
+/* Completion / review pop-out trigger blocks in both panels */
+.leaddash .mine-complete-block{
+  margin-top:16px;padding:14px 16px;border-radius:12px;
+  border:1px solid var(--gray-line);
+  background:linear-gradient(180deg,#fcfdff,#f6f8fd);
+}
+.leaddash .mine-complete-row .detail-label{font-size:12.5px;font-weight:800;color:var(--ink);}
+
+/* The completion / review pop-ups are reused inside the task slide-over
+   panel too — keep them above it (.detail-panel sits at z-index 1046). */
+.leaddash .modal-overlay{z-index:1200;}
+
+/* Kebab row menu — "Assign to specific people" checklist */
+.kebab-menu .km-checklist{
+  max-height:190px;overflow-y:auto;
+  display:flex;flex-direction:column;gap:1px;
+  padding:2px 2px 6px;margin-bottom:2px;
+}
+.kebab-menu .km-check{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 8px;border-radius:6px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--ink);
+}
+.kebab-menu .km-check:hover{background:var(--gray-bg);}
+.kebab-menu .km-check input{cursor:pointer;margin:0;}
+.kebab-menu button:disabled{opacity:.45;cursor:not-allowed;}
+
+/* Avatar-chip assignee picker (task detail panel — assign to 1+ people) */
+.leaddash .assign-picker{
+  border:1px solid var(--gray-line);border-radius:10px;
+  padding:12px;background:#fbfcfe;margin-top:6px;
+}
+.leaddash .assign-picker .assignee-select{gap:7px;}
+.leaddash .assign-picker .assignee-opt{padding:5px 11px 5px 5px;font-size:12px;}
+.leaddash .assign-controls .assign-picker + .assign-links{margin-top:10px;}
+
+/* Team Workload rows become clickable on the Lead dashboard (open the
+   member's task list). */
+.leaddash .workload-row-click{
+  cursor:pointer;border-radius:9px;padding:8px;margin-left:-8px;margin-right:-8px;
+  transition:background .14s ease;
+}
+.leaddash .workload-row-click:hover{background:var(--gray-bg);}
+.leaddash .workload-row-click:focus-visible{outline:2px solid var(--blue);outline-offset:1px;}
+
+/* Kebab "Apply to all N occurrences" row — divider from the member list */
+.kebab-menu .km-check-series{
+  border-top:1px solid var(--gray-line);
+  margin-top:4px;padding-top:8px;font-weight:700;color:var(--blue);
+}
+
+/* ===================================================================
+   "Assign from team" picker modal — searchable, scrollable member list
+   that scales past a handful of people.
+   =================================================================== */
+.leaddash .am-search{
+  display:flex;align-items:center;gap:9px;
+  border:1px solid var(--gray-line);border-radius:9px;padding:9px 12px;
+  color:var(--gray-mute);
+}
+.leaddash .am-search input{
+  flex:1;border:none;outline:none;background:transparent;
+  font:inherit;font-size:13.5px;color:var(--ink);
+}
+.leaddash .am-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;font-weight:700;color:var(--gray-mute);
+  margin:4px 2px -2px;
+}
+.leaddash .am-toolbar-actions{display:flex;gap:12px;}
+.leaddash .am-list{
+  max-height:320px;overflow-y:auto;
+  border:1px solid var(--gray-line);border-radius:10px;
+  display:flex;flex-direction:column;
+}
+.leaddash .am-row{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 12px;cursor:pointer;
+  border-bottom:1px solid var(--gray-line);
+  transition:background .12s ease;
+}
+.leaddash .am-row:last-child{border-bottom:none;}
+.leaddash .am-row:hover{background:var(--gray-bg);}
+.leaddash .am-row.sel{background:var(--blue-soft);}
+.leaddash .am-row input[type=checkbox]{cursor:pointer;margin:0;flex-shrink:0;}
+.leaddash .am-row-meta{flex:1;min-width:0;}
+.leaddash .am-row-name-line{
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+}
+.leaddash .am-row-name{font-size:13.5px;font-weight:700;color:var(--ink);}
+.leaddash .am-row-role{
+  font-size:11px;font-weight:600;color:var(--gray-mute);margin-top:1px;
+}
+/* This person's own deadline — shown right next to their name, same line,
+   once one's set and the picker's collapsed back to the icon. */
+.leaddash .am-row-due-chip{
+  display:inline-flex;align-items:center;gap:3px;flex-shrink:0;
+  font-size:10.5px;font-weight:700;color:var(--blue);
+  background:var(--blue-soft);border-radius:20px;padding:1px 8px 1px 6px;
+}
+/* The calendar toggle only appears once 2+ people are selected — per-
+   assignee deadlines only make sense for a shared (multi-assignee) task.
+   Lives beside the name; clicking it opens AssigneeDueDateModal — a real,
+   viewport-centered Modal, not an anchored popover — so it's never
+   clipped by .am-list's own overflow:auto below. */
+.leaddash .am-due-toggle{
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  width:26px;height:26px;border-radius:7px;color:var(--gray-mute);cursor:pointer;
+  margin-left:auto;
+}
+.leaddash .am-due-toggle:hover{background:var(--gray-bg);color:var(--ink);}
+.leaddash .am-due-toggle.set{color:var(--blue);background:var(--blue-soft);}
+.leaddash .am-series{
+  display:flex;align-items:center;gap:8px;margin-top:10px;
+  font-size:12.5px;font-weight:700;color:var(--blue);cursor:pointer;
+}
+.leaddash .am-series input{cursor:pointer;margin:0;}
+
+/* Task panel: cleaner current-assignee summary (out of the 2-col grid) */
+.leaddash .assignee-summary{display:flex;flex-direction:column;gap:8px;margin-top:2px;}
+.leaddash .assignee-summary .assignee-chip{gap:10px;}
+.leaddash .assignee-summary .stacked-avatars{display:flex;}
+.leaddash .assignee-summary .stacked-avatars .sm-avatar{
+  width:28px;height:28px;border-radius:50%;border:2px solid #fff;margin-left:-9px;
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;
+}
+.leaddash .assignee-summary .stacked-avatars .sm-avatar:first-child{margin-left:0;}
+
+/* Compact horizontal assignee pills (task detail panel) — max 3 + "+N" */
+.leaddash .assignee-pills-wrap{display:flex;flex-direction:column;gap:6px;margin-top:2px;}
+.leaddash .assignee-pills{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.leaddash .assignee-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 10px 3px 3px;border-radius:20px;
+  border:1px solid var(--gray-line);background:#fff;
+  font-size:12px;font-weight:600;color:var(--ink);
+  max-width:230px;
+}
+.leaddash .assignee-pill .ap-avatar{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:8.5px;font-weight:700;
+}
+.leaddash .assignee-pill .ap-name{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* This person's own deadline on a shared task — see AssigneeManagerModal. */
+.leaddash .assignee-pill .ap-due{
+  display:inline-flex;align-items:center;gap:2px;flex-shrink:0;
+  font-size:10px;font-weight:700;color:var(--blue);
+  padding-left:6px;border-left:1px solid var(--gray-line);
+  white-space:nowrap;
+}
+.leaddash .assignee-pill.done{
+  border-color:var(--green);background:var(--green-soft);color:var(--green);
+}
+.leaddash .assignee-pill-more{
+  padding:4px 11px;font-weight:800;color:var(--gray-mute);
+  background:var(--gray-bg);border-style:dashed;cursor:default;
+}
+.leaddash .assignee-pills-sub{
+  font-size:11px;font-weight:700;color:var(--gray-mute);
+}
+
+/* ---- Current-period banner (dashboard top strip) ---- */
+.leaddash .current-period-banner{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  background:var(--blue-soft);border:1px solid #cdd9ff;border-radius:12px;
+  padding:13px 18px;margin-bottom:18px;
+}
+.leaddash .current-period-banner.is-closing{background:#FFF4E5;border-color:#FFD9A8;}
+.leaddash .current-period-banner.is-empty{
+  background:var(--gray-bg);border-color:var(--gray-line);color:var(--gray-mute);
+  font-size:13px;font-weight:600;gap:8px;justify-content:flex-start;
+}
+.leaddash .cpb-main{display:flex;align-items:center;gap:12px;min-width:0;}
+.leaddash .cpb-dot{
+  width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0;
+  box-shadow:0 0 0 4px rgba(47,85,212,.18);
+}
+.leaddash .current-period-banner.is-closing .cpb-dot{background:#E5900B;box-shadow:0 0 0 4px rgba(229,144,11,.2);}
+.leaddash .cpb-label{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;}
+.leaddash .cpb-tag{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--blue);
+}
+.leaddash .current-period-banner.is-closing .cpb-tag{color:#B4740A;}
+.leaddash .cpb-label strong{font-size:15px;font-weight:800;color:var(--ink);}
+.leaddash .cpb-dates{font-size:12px;color:var(--gray-mute);margin-top:2px;}
+.leaddash .cpb-bs{color:#8a93a3;}
+.leaddash .cpb-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.leaddash .cpb-progress{
+  width:120px;height:6px;border-radius:4px;background:#ffffff;overflow:hidden;border:1px solid #cdd9ff;
+}
+.leaddash .cpb-progress-fill{height:100%;background:var(--blue);border-radius:4px;}
+.leaddash .current-period-banner.is-closing .cpb-progress-fill{background:#E5900B;}
+.leaddash .cpb-countdown{font-size:12px;font-weight:700;color:var(--ink);white-space:nowrap;}
+
+/* ---- Period preview (calculated, not-yet-generated period) ---- */
+.leaddash .preview-panel{display:flex;flex-direction:column;gap:14px;}
+.leaddash .preview-panel-note{
+  display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--blue);
+  background:var(--blue-soft);border-radius:9px;padding:10px 14px;
+}
+.leaddash .preview-pack-card{
+  background:#fff;border:1px dashed var(--gray-line);border-radius:var(--radius);overflow:hidden;
+}
+.leaddash .preview-pack-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 18px;cursor:pointer;transition:background .12s;
+}
+.leaddash .preview-pack-head:hover{background:var(--gray-bg);}
+.leaddash .preview-pack-head.expanded{background:var(--blue-soft);}
+.leaddash .preview-pack-head-main{display:flex;align-items:center;gap:10px;}
+.leaddash .preview-pack-title{font-size:15px;font-weight:800;color:var(--ink);}
+.leaddash .preview-pack-head.expanded .preview-pack-title{color:var(--blue-dark);}
+.leaddash .preview-pack-sub{font-size:12px;color:var(--gray-mute);margin-top:2px;}
+.leaddash .preview-pack-head-right{flex-shrink:0;display:flex;align-items:center;gap:12px;}
+.leaddash .preview-task-list{display:flex;flex-direction:column;gap:10px;padding:0 18px 16px;}
+.leaddash .preview-pack-card > .empty-note{margin:0 18px 16px;}
+.leaddash .preview-task-row{border-top:1px solid var(--gray-line);padding-top:10px;}
+.leaddash .preview-task-row:first-child{border-top:none;padding-top:0;}
+.leaddash .preview-task-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+.leaddash .preview-task-title{font-size:13.5px;font-weight:700;color:var(--ink);}
+.leaddash .freq-chip{
+  font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:99px;
+  background:var(--gray-bg);color:var(--gray-mute);text-transform:uppercase;letter-spacing:.2px;
+}
+.leaddash .freq-chip-sm{font-size:9.5px;padding:2px 7px;}
+.leaddash .preview-due{font-size:12px;font-weight:600;color:var(--gray-mute);margin-left:auto;}
+.leaddash .preview-due-upcoming{color:var(--amber);}
+.leaddash .preview-subtask-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;padding-left:18px;}
+.leaddash .preview-subtask-row{display:flex;align-items:center;gap:7px;color:var(--gray-mute);}
+.leaddash .preview-subtask-row svg{flex-shrink:0;opacity:.6;}
+.leaddash .preview-subtask-title{font-size:12.5px;font-weight:600;color:var(--ink);}
+
+/* ===================================================================
+   Bulk selection (Team Lead) — checkbox column + action bar
+   =================================================================== */
+.leaddash th.select-cell,
+.leaddash td.select-cell{width:36px;padding-left:14px;padding-right:0;text-align:center;}
+.leaddash .select-cell input{width:15px;height:15px;cursor:pointer;margin:0;accent-color:var(--blue);vertical-align:middle;}
+.leaddash .select-cell input:disabled{cursor:default;opacity:.4;}
+.leaddash tr.row-selected{background:var(--blue-soft,#F1F5FF);}
+.leaddash .bulk-bar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 18px;background:var(--blue-soft,#F1F5FF);
+  border-bottom:1px solid var(--gray-line);
+}
+.leaddash .bulk-count{font-size:13px;font-weight:700;color:var(--blue);margin-right:6px;}
+.leaddash .bulk-limit{font-size:12px;font-weight:600;color:var(--amber);margin-right:4px;}
+.leaddash .bulk-sep{width:1px;height:20px;background:var(--gray-line);margin:0 4px;}
+.leaddash .bulk-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:600;padding:7px 12px;border-radius:8px;
+  border:1px solid var(--gray-line);background:#fff;color:var(--ink);cursor:pointer;
+}
+.leaddash .bulk-btn:hover:not(:disabled){border-color:var(--blue);color:var(--blue);}
+.leaddash .bulk-btn:disabled{opacity:.45;cursor:not-allowed;}
+.leaddash .bulk-btn-danger{color:var(--red);}
+.leaddash .bulk-btn-danger:hover:not(:disabled){border-color:var(--red);color:var(--red);}
+.leaddash .bulk-clear{
+  margin-left:auto;font-size:12.5px;font-weight:600;color:var(--gray-mute);
+  background:none;border:none;cursor:pointer;
+}
+.leaddash .bulk-clear:hover{color:var(--ink);}
+.leaddash .bulk-checklist{
+  display:flex;flex-direction:column;gap:2px;max-height:240px;overflow-y:auto;
+  border:1px solid var(--gray-line);border-radius:9px;padding:6px;
+}
+.leaddash .bulk-check{
+  display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:7px;
+  font-size:13.5px;font-weight:500;cursor:pointer;
+}
+.leaddash .bulk-check:hover{background:var(--gray-bg);}
+.leaddash .bulk-check input{margin:0;cursor:pointer;accent-color:var(--blue);}
+.leaddash .bulk-radio{
+  display:flex;align-items:flex-start;gap:9px;padding:8px 2px;cursor:pointer;
+  font-size:13.5px;font-weight:600;
+}
+.leaddash .bulk-radio input{margin:3px 0 0;accent-color:var(--blue);}
+.leaddash .bulk-radio small{display:block;font-size:12px;font-weight:500;color:var(--gray-mute);margin-top:2px;}
+
+/* ===================================================================
+   Time Log page — daily bar chart + week / month summaries
+   =================================================================== */
+.leaddash .time-logged-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.leaddash .time-log-link{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12.5px;font-weight:700;color:var(--blue);text-decoration:none;
+  background:var(--blue-soft);border:1px solid transparent;border-radius:20px;
+  padding:5px 11px;transition:background .15s,border-color .15s;
+}
+.leaddash .time-log-link:hover{background:#fff;border-color:var(--blue);}
+.leaddash .time-log-link svg{transition:transform .15s;}
+.leaddash .time-log-link:hover svg{transform:translateX(2px);}
+
+.leaddash .tl-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px;}
+.leaddash .tl-stat{display:flex;flex-direction:column;gap:4px;padding:18px 20px;}
+.leaddash .tl-stat-lbl{font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gray-mute);}
+.leaddash .tl-stat-num{font-size:30px;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;}
+.leaddash .tl-stat-sub{font-size:12.5px;font-weight:500;color:var(--gray-mute);}
+.leaddash .tl-stat-hero{background:var(--blue);border-color:var(--blue);}
+.leaddash .tl-stat-hero .tl-stat-lbl,
+.leaddash .tl-stat-hero .tl-stat-sub{color:rgba(255,255,255,.78);}
+.leaddash .tl-stat-hero .tl-stat-num{color:#fff;}
+.leaddash .tl-panel{margin-bottom:20px;}
+.leaddash .tl-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.leaddash .tl-panel-head h3{font-size:16px;font-weight:700;line-height:1.3;}
+.leaddash .tl-sub{font-size:12.5px;color:var(--gray-mute);margin-top:4px;line-height:1.4;}
+.leaddash .tl-controls{display:flex;gap:10px;flex-wrap:wrap;}
+.leaddash .tl-seg{display:inline-flex;border:1px solid var(--gray-line);border-radius:9px;overflow:hidden;background:#fff;}
+.leaddash .tl-seg button{
+  font-size:12.5px;font-weight:600;padding:7px 13px;border:none;background:#fff;
+  color:var(--gray-mute);cursor:pointer;
+}
+.leaddash .tl-seg button + button{border-left:1px solid var(--gray-line);}
+.leaddash .tl-seg button:hover{color:var(--ink);}
+.leaddash .tl-seg button.on{background:var(--blue-soft);color:var(--blue);}
+.leaddash .tl-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
+.leaddash .tl-two .tl-panel{margin-bottom:20px;}
+
+/* chart */
+.leaddash .tl-chart{display:flex;gap:10px;}
+.leaddash .tl-y{position:relative;width:34px;height:220px;flex-shrink:0;}
+.leaddash .tl-y span{
+  position:absolute;right:0;transform:translateY(50%);
+  font-size:11.5px;font-weight:600;color:var(--gray-mute);font-variant-numeric:tabular-nums;
+}
+.leaddash .tl-plot-wrap{flex:1;min-width:0;}
+.leaddash .tl-plot{position:relative;height:220px;}
+.leaddash .tl-grid{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--gray-line);}
+.leaddash .tl-cols{position:absolute;inset:0;display:flex;align-items:stretch;}
+.leaddash .tl-col{
+  flex:1;min-width:0;display:flex;align-items:flex-end;justify-content:center;
+  padding:0 1px;cursor:default;
+}
+.leaddash .tl-col.hover{background:var(--gray-bg);}
+.leaddash .tl-bar{
+  width:100%;max-width:24px;background:var(--blue);
+  border-radius:4px 4px 0 0;
+}
+.leaddash .tl-col.hover .tl-bar{background:var(--blue-dark);}
+.leaddash .tl-tip{
+  position:absolute;top:-6px;z-index:5;pointer-events:none;white-space:nowrap;
+  background:#fff;border:1px solid var(--gray-line);border-radius:9px;
+  box-shadow:0 8px 24px rgba(16,22,42,.14);padding:8px 11px;
+}
+.leaddash .tl-tip-date{font-size:11.5px;font-weight:600;color:var(--gray-mute);}
+.leaddash .tl-tip-val{font-size:14px;font-weight:800;color:var(--ink);margin-top:2px;}
+.leaddash .tl-x{display:flex;margin-top:8px;}
+.leaddash .tl-xcell{
+  flex:1;min-width:0;position:relative;height:16px;
+}
+.leaddash .tl-xcell span{
+  position:absolute;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-size:11.5px;font-weight:600;color:var(--gray-mute);
+}
+
+/* weekly / monthly rows */
+.leaddash .tl-rows{display:flex;flex-direction:column;gap:6px;}
+.leaddash .tl-row{
+  display:grid;grid-template-columns:minmax(120px,170px) 1fr 72px;align-items:center;gap:12px;
+  padding:8px 10px;border-radius:9px;
+}
+.leaddash .tl-row.current{background:var(--gray-bg);}
+.leaddash .tl-row-label{font-size:13px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.leaddash .tl-now{
+  font-size:10.5px;font-weight:700;color:var(--blue);background:var(--blue-soft);
+  border-radius:20px;padding:2px 8px;
+}
+.leaddash .tl-row-track{height:10px;background:var(--gray-bg);border-radius:6px;overflow:hidden;}
+.leaddash .tl-row.current .tl-row-track{background:#fff;}
+.leaddash .tl-row-fill{height:100%;background:var(--blue);border-radius:6px;min-width:0;}
+.leaddash .tl-row-val{font-size:13px;font-weight:700;text-align:right;font-variant-numeric:tabular-nums;}
+
+/* table view */
+.leaddash .tl-table-wrap{max-height:340px;overflow-y:auto;border:1px solid var(--gray-line);border-radius:10px;}
+.leaddash .tl-table{width:100%;border-collapse:collapse;}
+.leaddash .tl-table th{position:sticky;top:0;background:#FAFBFC;}
+.leaddash .tl-table td,.leaddash .tl-table th{padding:11px 16px;}
+
+@media (max-width:900px){
+  .leaddash .tl-stats{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .leaddash .tl-two{grid-template-columns:1fr;}
+}
+@media (max-width:520px){
+  .leaddash .tl-row{grid-template-columns:1fr 60px;}
+  .leaddash .tl-row-track{grid-column:1 / -1;order:3;}
+}

@@ -1,0 +1,213 @@
+/* Close Bhai assistant. Everything is scoped under .clchat (own variables, own class prefix) so it
+   can't collide with the app's --cl-* tokens or Bootstrap. z-index stays below Bootstrap modals. */
+.clchat {
+  --clchat-blue: #2f55d4;
+  --clchat-text: #1f2433;
+  --clchat-muted: #6b7288;
+  --clchat-border: #e2e5ee;
+  --clchat-danger: #d6423a;
+  --clchat-grad: linear-gradient(160deg, #2f58d4 0%, #172a6e 100%);
+  --clchat-grad-bar: linear-gradient(90deg, #111a3d 0%, #243d8c 60%, #3563e6 100%);
+
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1040;
+  font: 14px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--clchat-text);
+  text-align: left;
+}
+.clchat *, .clchat *::before, .clchat *::after { box-sizing: border-box; }
+.clchat button, .clchat textarea { font: inherit; margin: 0; }
+
+/* floating button */
+.clchat-fab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  margin-left: auto;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  background: var(--clchat-grad);
+  box-shadow: 0 8px 22px rgba(20, 38, 110, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.clchat-fab:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 12px 28px rgba(20, 38, 110, 0.5); }
+.clchat-fab:focus-visible { outline: 3px solid #9db5ff; outline-offset: 3px; }
+.clchat-unread {
+  position: absolute; top: 2px; right: 2px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--clchat-danger); border: 2px solid #fff;
+}
+
+/* panel */
+.clchat-panel {
+  position: absolute;
+  right: 0;
+  bottom: 72px;
+  width: 390px;
+  height: min(600px, calc(100vh - 130px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(15, 25, 70, 0.28), 0 0 0 1px rgba(15, 25, 70, 0.06);
+  transform-origin: bottom right;
+  opacity: 0;
+  transform: scale(0.94) translateY(12px);
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.18s, transform 0.18s, visibility 0.18s;
+}
+.clchat-open .clchat-panel { opacity: 1; transform: none; pointer-events: auto; visibility: visible; }
+
+.clchat-head { display: flex; align-items: center; gap: 10px; padding: 13px 10px 13px 16px; color: #fff; background: var(--clchat-grad-bar); }
+.clchat-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.18); display: grid; place-items: center; flex-shrink: 0; font-size: 18px; }
+.clchat-who { flex: 1; min-width: 0; line-height: 1.25; }
+.clchat-who b { display: block; font-weight: 600; font-size: 14.5px; }
+.clchat-who small { display: block; font-size: 11.5px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.clchat-head-btn { background: none; border: 0; color: #fff; width: 30px; height: 30px; padding: 0; border-radius: 8px; cursor: pointer; font-size: 14px; opacity: 0.85; }
+.clchat-head-btn:hover { background: rgba(255, 255, 255, 0.16); opacity: 1; }
+.clchat-head-btn:focus-visible { outline: 2px solid #fff; }
+
+.clchat-messages { flex: 1; overflow-y: auto; padding: 16px; background: #f6f7fb; display: flex; flex-direction: column; gap: 12px; }
+
+.clchat-welcome { text-align: center; margin: auto 0; padding: 10px; }
+.clchat-big { width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 24px; background: var(--clchat-grad); }
+.clchat-welcome h4 { margin: 0 0 4px; font-size: 16px; font-weight: 600; }
+.clchat-welcome p { margin: 0; color: var(--clchat-muted); font-size: 13px; }
+.clchat-chips { display: flex; flex-direction: column; gap: 7px; margin-top: 16px; }
+.clchat-chip { border: 1px solid var(--clchat-border); background: #fff; color: var(--clchat-text); font-size: 13px; padding: 9px 12px; border-radius: 12px; cursor: pointer; text-align: left; }
+.clchat-chip:hover:not(:disabled) { border-color: var(--clchat-blue); color: var(--clchat-blue); }
+.clchat-chip:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.clchat-msg { display: flex; flex-direction: column; max-width: 90%; }
+.clchat-msg.user { align-self: flex-end; align-items: flex-end; }
+.clchat-msg.bot { align-self: flex-start; }
+.clchat-bubble { padding: 9px 13px; border-radius: 16px; word-wrap: break-word; overflow-wrap: anywhere; font-size: 13.5px; line-height: 1.5; white-space: pre-wrap; }
+.clchat-msg.user .clchat-bubble { background: linear-gradient(135deg, #2d55cf, #1c3490); color: #fff; border-bottom-right-radius: 4px; }
+.clchat-msg.bot .clchat-bubble { background: #fff; border: 1px solid var(--clchat-border); border-bottom-left-radius: 4px; white-space: normal; }
+.clchat-msg.bot .clchat-bubble.clchat-error { border-color: #f0b4b0; color: var(--clchat-danger); background: #fff7f6; }
+.clchat-streaming::after { content: ''; display: inline-block; width: 7px; height: 14px; margin-left: 2px; vertical-align: -2px; background: var(--clchat-blue); border-radius: 1px; animation: clchat-blink 1s steps(2) infinite; }
+
+.clchat-bubble p { margin: 0 0 8px; }
+.clchat-bubble > :last-child { margin-bottom: 0; }
+.clchat-bubble ul, .clchat-bubble ol { margin: 0 0 8px; padding-left: 20px; }
+.clchat-bubble li { margin: 2px 0; }
+.clchat-bubble .clchat-h { font-weight: 600; margin: 4px 0 6px; }
+.clchat-bubble a { color: var(--clchat-blue); }
+.clchat-bubble code { background: #eef0f7; padding: 1px 5px; border-radius: 5px; font: 12.5px ui-monospace, Menlo, monospace; }
+.clchat-bubble pre { background: #eef0f7; padding: 9px 11px; border-radius: 8px; overflow-x: auto; margin: 6px 0 8px; white-space: pre; }
+.clchat-bubble pre code { background: none; padding: 0; }
+.clchat-table-wrap { overflow-x: auto; margin: 4px 0 8px; }
+.clchat-bubble table { border-collapse: collapse; font-size: 12.5px; min-width: 100%; }
+.clchat-bubble th, .clchat-bubble td { border: 1px solid var(--clchat-border); padding: 4px 8px; text-align: left; vertical-align: top; }
+.clchat-bubble th { background: #f1f3fa; font-weight: 600; white-space: nowrap; }
+
+.clchat-status { margin-top: 4px; font-size: 11px; color: var(--clchat-muted); }
+.clchat-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 5px; }
+.clchat-tag { font-size: 10.5px; padding: 1px 8px; border-radius: 999px; background: #e6ebfb; color: var(--clchat-blue); font-weight: 500; text-transform: uppercase; letter-spacing: 0.03em; }
+.clchat-src { font-size: 11px; padding: 2px 8px; border-radius: 8px; background: #fff; border: 1px solid var(--clchat-border); }
+.clchat-mini { border: 0; background: none; color: var(--clchat-muted); cursor: pointer; font-size: 11px; padding: 2px 4px; }
+.clchat-mini:hover:not(:disabled) { color: var(--clchat-blue); }
+.clchat-retry { color: var(--clchat-danger); font-weight: 600; }
+
+.clchat-typing { display: inline-flex; gap: 4px; padding: 4px 0; }
+.clchat-typing span { width: 7px; height: 7px; border-radius: 50%; background: #98a0b8; animation: clchat-pulse 1.2s infinite; }
+.clchat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.clchat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes clchat-pulse { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+@keyframes clchat-blink { 50% { opacity: 0; } }
+
+.clchat-composer { margin: 0; padding: 10px 12px 8px; border-top: 1px solid var(--clchat-border); background: #fff; }
+.clchat-row { display: flex; align-items: flex-end; gap: 8px; background: #f3f4f9; border: 1px solid transparent; border-radius: 22px; padding: 5px 5px 5px 14px; }
+.clchat-row:focus-within { border-color: var(--clchat-blue); background: #fff; }
+.clchat-input { flex: 1; border: 0; outline: 0; resize: none; background: transparent; color: #000; caret-color: #000; font-size: 13.5px; max-height: 110px; padding: 7px 0; }
+.clchat-input::placeholder { color: #8a91a6; opacity: 1; }
+.clchat-send { width: 36px; height: 36px; padding: 0; border-radius: 50%; border: 0; cursor: pointer; color: #fff; display: grid; place-items: center; flex-shrink: 0; font-size: 15px; background: var(--clchat-grad); }
+.clchat-send:disabled { opacity: 0.45; cursor: not-allowed; }
+.clchat-foot { display: block; margin-top: 6px; text-align: center; font-size: 10.5px; color: var(--clchat-muted); }
+
+/* documents: add files for the assistant to read, see them, remove them */
+.clchat [hidden] { display: none !important; }
+.clchat-head-btn-on { background: rgba(255, 255, 255, 0.22); opacity: 1; }
+.clchat-chip-docs { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; color: var(--clchat-blue); border-color: #c9d4f7; }
+.clchat-attach { width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--clchat-muted); cursor: pointer; font-size: 17px; display: grid; place-items: center; flex-shrink: 0; align-self: flex-end; margin: 2px 0; }
+.clchat-attach:hover { color: var(--clchat-blue); background: #e6ebfb; }
+.clchat-row:has(.clchat-attach) { padding-left: 6px; }
+
+.clchat-docs { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; overflow-y: auto; background: #f6f7fb; }
+.clchat-docs-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.clchat-docs-back { border: 0; background: none; padding: 2px 0; color: var(--clchat-blue); font-weight: 600; font-size: 13px; cursor: pointer; }
+.clchat-docs-count { font-size: 12px; color: var(--clchat-muted); }
+.clchat-docs-back:focus-visible, .clchat-docs-btn:focus-visible, .clchat-attach:focus-visible { outline: 2px solid var(--clchat-blue); outline-offset: 2px; }
+
+.clchat-drop { text-align: center; padding: 14px 12px; border: 1.5px dashed #b9c3e6; border-radius: 14px; background: #fff; transition: border-color 0.15s, background 0.15s; }
+.clchat-drop-on { border-color: var(--clchat-blue); background: #eef2ff; }
+.clchat-drop > i { font-size: 26px; color: var(--clchat-blue); }
+.clchat-drop p { margin: 4px 0 10px; font-size: 13px; }
+.clchat-drop small { display: block; margin-top: 8px; font-size: 11px; color: var(--clchat-muted); }
+.clchat-drop-btns { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.clchat-docs-btn { border: 0; border-radius: 10px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; color: #fff; background: var(--clchat-grad); }
+.clchat-docs-btn-ghost { background: #fff; color: var(--clchat-blue); border: 1px solid #c9d4f7; }
+.clchat-docs-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.clchat-prog { background: #fff; border: 1px solid var(--clchat-border); border-radius: 12px; padding: 9px 12px; font-size: 12.5px; }
+.clchat-prog-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.clchat-bar { height: 6px; margin-top: 7px; border-radius: 999px; background: #e6e9f5; overflow: hidden; }
+.clchat-bar > span { display: block; height: 100%; background: var(--clchat-grad); transition: width 0.3s; }
+.clchat-prog details { margin-top: 6px; color: var(--clchat-muted); font-size: 12px; }
+.clchat-prog summary { cursor: pointer; }
+.clchat-prog ul { margin: 4px 0 0; padding-left: 18px; max-height: 110px; overflow: auto; }
+.clchat-prog li span { margin-left: 4px; font-style: italic; }
+.clchat-docs-err { margin: 6px 0 0; color: var(--clchat-danger); font-size: 12.5px; }
+.clchat-docs-filter { width: 100%; border: 1px solid var(--clchat-border); border-radius: 10px; padding: 7px 10px; font-size: 13px; background: #fff; color: #000; }
+
+.clchat-doclist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.clchat-doc { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--clchat-border); border-radius: 10px; padding: 7px 10px; }
+.clchat-doc > i { color: var(--clchat-blue); flex-shrink: 0; }
+.clchat-doc-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.clchat-doc-del { font-size: 14px; }
+.clchat-doc-del:hover:not(:disabled) { color: var(--clchat-danger); }
+.clchat-docs-empty { color: var(--clchat-muted); font-size: 13px; text-align: center; padding: 14px 6px; }
+
+@media (max-width: 480px) {
+  .clchat { right: 16px; bottom: 16px; }
+  .clchat-panel { position: fixed; inset: 0; width: auto; height: auto; border-radius: 0; }
+  .clchat-open .clchat-fab { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clchat *, .clchat *::before, .clchat *::after { animation: none !important; transition: none !important; }
+}
+@media print { .clchat { display: none; } }
+
+/* report card (Report Studio requests typed into the chat) */
+.clchat-report { margin-top: 8px; border: 1px solid var(--clchat-border); border-radius: 12px; background: #fff; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; max-width: 100%; }
+.clchat-report-title { display: flex; gap: 10px; align-items: flex-start; }
+.clchat-report-title > i { font-size: 1.25rem; color: var(--clchat-blue); margin-top: 2px; }
+.clchat-report-title div { display: flex; flex-direction: column; min-width: 0; }
+.clchat-report-title b { font-size: 13px; line-height: 1.3; }
+.clchat-report-title small { color: var(--clchat-muted); font-size: 11.5px; }
+.clchat-report-kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.clchat-report-kpi { display: flex; flex-direction: column; padding: 6px 9px; border-radius: 8px; background: #f1f4f7; border-left: 3px solid #9aa7b5; min-width: 0; }
+.clchat-report-kpi small { color: var(--clchat-muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .03em; }
+.clchat-report-kpi b { font-size: 16px; line-height: 1.2; }
+.clchat-tone-good { background: #e7f6ee; border-left-color: #1e8e5a; }
+.clchat-tone-warn { background: #fff4dc; border-left-color: #d98a00; }
+.clchat-tone-bad { background: #fde8ea; border-left-color: #c62f3e; }
+.clchat-delta { font-size: 11px; font-weight: 600; }
+.clchat-text-good { color: #1e8e5a; } .clchat-text-bad { color: #c62f3e; } .clchat-text-warn { color: #b87400; }
+.clchat-report-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.clchat-report-open, .clchat-report-dl { border: 1px solid var(--clchat-border); background: #f6f8fb; color: var(--clchat-text); border-radius: 8px; padding: 5px 10px; font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.clchat-report-open { background: var(--clchat-blue); border-color: var(--clchat-blue); color: #fff; font-weight: 600; }
+.clchat-report-dl:hover:not(:disabled) { border-color: var(--clchat-blue); }
+.clchat-report-dl-wanted { border-color: var(--clchat-blue); box-shadow: 0 0 0 2px rgba(47, 85, 212, .18); }
+.clchat-report-dl:disabled { opacity: .6; cursor: default; }
+.clchat-report-error { color: var(--clchat-danger); }
+.clchat-report-done { color: #1e8e5a; }

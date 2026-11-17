@@ -1,0 +1,40 @@
+# Environment files and local credentials
+.env
+.env.*
+*.env
+!*.env.example
+!**/*.env.example
+closeloop_prod_backup_20261008_040414.sql
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build output and logs
+build/
+dist/
+*.log
+ProjectLoad/dataLoaderAPI/output/
+
+# Local vector db / temp runtime folders
+qdrant_storage/
+qdrant_storage_*/
+**/qdrant_storage/
+**/qdrant_storage_*/
+**/tmp_*/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+# Pytest
+.pytest_cache/
+
+# Local runtime
+.pytest_cache/
+tmp_*/

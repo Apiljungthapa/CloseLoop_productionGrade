@@ -1,0 +1,24 @@
+# Build from the repo root: docker build -f infra/docker/Dockerfile.ingestion .
+FROM python:3.10-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1 PIP_DEFAULT_TIMEOUT=300 PIP_RETRIES=10 PYTHONPATH=/app
+WORKDIR /app
+
+# html-to-markdown 2.5.0 has no Linux ARM wheel, so it is compiled from source (needs gcc + Rust)
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+ENV PATH=/root/.cargo/bin:$PATH
+
+COPY apps/ingestion/ProjectLoad/dataLoaderAPI/src/requirements.txt ./requirements.txt
+RUN pip install -r requirements.txt python-dotenv
+
+COPY apps/ingestion/ProjectLoad/dataLoaderAPI/src ./src
+RUN useradd --create-home appuser && mkdir -p /data/uploads && chown -R appuser /app /data
+USER appuser
+
+EXPOSE 8001
+HEALTHCHECK --interval=30s --timeout=5s --start-period=90s \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')" || exit 1
+
+# One worker per container: the embedding model is loaded per process
+CMD ["uvicorn", "api:app", "--app-dir", "src", "--host", "0.0.0.0", "--port", "8001"]

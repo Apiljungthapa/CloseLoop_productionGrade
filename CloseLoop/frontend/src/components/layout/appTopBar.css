@@ -1,0 +1,172 @@
+/* Samrat-style top bar, used only for the Team Lead and Super Admin areas.
+   Self-contained under .app-topbar so it never touches the Bootstrap
+   navbar used by the other roles. Values ported from the frontend_samrat
+   .topbar design (slightly taller for a cleaner feel). */
+
+.app-topbar {
+  min-height: 88px;
+  background: linear-gradient(90deg, #0957b6 20%, #0b67d7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px clamp(16px, 3vw, 44px);
+  flex-wrap: wrap;
+  gap: 12px;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.app-topbar .lt-logo {
+  color: #fff;
+  font-weight: 800;
+  font-size: 27px;
+  letter-spacing: 0.2px;
+  line-height: 1.1;
+}
+.app-topbar .lt-tag {
+  color: #b9c4ea;
+  font-size: 12.5px;
+  margin-top: 2px;
+}
+.app-topbar .lt-nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.app-topbar .lt-nav a {
+  color: #c3cdeb;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 10px 17px;
+  border-radius: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.app-topbar .lt-nav a:hover {
+  color: #fff;
+}
+.app-topbar .lt-nav a.active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.app-topbar .lt-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+  position: relative;
+}
+.app-topbar .notif-bell {
+  color: #fff;
+}
+.app-topbar .lt-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 30px;
+  padding: 6px 12px 6px 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.app-topbar .lt-pill:hover {
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.app-topbar .lt-avatar {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #3f4fd1; /* overridden inline with the user's palette colour */
+  color: #fff;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+  font-size: 12.5px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.app-topbar .lt-dot {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3ecf8e;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+.app-topbar .lt-dot.off {
+  background: #f5a524;
+}
+.app-topbar .lt-idblock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.25;
+}
+.app-topbar .lt-name {
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
+}
+.app-topbar .lt-role {
+  color: #c6ceee;
+  font-size: 11px;
+  text-align: left;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.app-topbar .lt-caret {
+  color: #c6ceee;
+  font-size: 11px;
+  margin-left: 2px;
+}
+.app-topbar .lt-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #e7e9ef;
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(16, 22, 42, 0.16);
+  min-width: 190px;
+  padding: 6px;
+  z-index: 300;
+}
+.app-topbar .lt-menu a,
+.app-topbar .lt-menu button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d2333;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: left;
+}
+.app-topbar .lt-menu a:hover,
+.app-topbar .lt-menu button:hover {
+  background: #f4f5f7;
+}
+@media (max-width: 640px) {
+  .app-topbar {
+    padding: 12px 16px;
+  }
+}

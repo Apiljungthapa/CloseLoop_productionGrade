@@ -1,0 +1,4 @@
+# All services in one environment. Each app also has its own requirements file.
+-r apps/ingestion/ProjectLoad/dataLoaderAPI/src/requirements.txt
+-r apps/query_gateway/requirements.txt
+python-dotenv

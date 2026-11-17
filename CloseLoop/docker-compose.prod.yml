@@ -1,0 +1,116 @@
+# CloseLoop — PRODUCTION stack (app only)
+#
+#   db (internal) + backend (internal) + frontend (internal)
+#
+# Public traffic comes in through the shared standalone edge nginx at
+# ~/edge/ (owns 80/443, terminates TLS for closeloop.foursymmetrons.com),
+# which reaches the frontend container by name over this stack's network
+# (closeloop-prod_default). This compose publishes NOTHING to the host.
+#
+#   cp .env.prod.example .env.prod          # then edit
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+#
+# Separate project name so prod volumes never collide with the dev stack.
+name: closeloop-prod
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # No ports: — Postgres is reachable only from the compose network.
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENV: production
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRES_MINUTES: "30"
+      
+      JWT_REFRESH_EXPIRES_DAYS: "7"
+      COOKIE_SECURE: "true"
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN}
+      LOGIN_MAX_ATTEMPTS: "5"
+      LOGIN_LOCKOUT_MINUTES: "15"
+      CORS_ORIGINS: ${PUBLIC_URL}
+      PUBLIC_APP_URL: ${PUBLIC_URL}
+      # Keep "0" for a clean production DB. To create the first Platform Owner,
+      # set to "1" for ONE boot, then set back to "0" and redeploy.
+      SEED_ON_BOOT: "0"
+      UPLOAD_DIR: /app/uploads
+      # "Forgot password" email delivery.
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+
+      
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL}
+      SMTP_USE_TLS: ${SMTP_USE_TLS}
+      # HRMS integration (project list on the HRMS Integration page).
+      HRMS_BASE_URL: ${HRMS_BASE_URL:-https://api-hrms.innovationnxt.com/backend}
+      HRMS_TENANT_ID: ${HRMS_TENANT_ID:-}
+      HRMS_SECRET: ${HRMS_SECRET:-}
+      # Automated timesheet. Both stay off until the HRMS timesheet API is wired
+      # into backend/app/services/hrms_timesheet_gateway.py (see backend/TIMESHEET.md).
+      HRMS_TIMESHEET_POST_PATH: ${HRMS_TIMESHEET_POST_PATH:-/v1/external/timesheets}
+      HRMS_TIMESHEET_LIST_PATH: ${HRMS_TIMESHEET_LIST_PATH:-}
+      TIMESHEET_SUBMIT_ENABLED: ${TIMESHEET_SUBMIT_ENABLED:-false}
+      TIMESHEET_REMINDERS_ENABLED: ${TIMESHEET_REMINDERS_ENABLED:-false}
+      # Chatbot (Close Bhai). The backend is the only caller of the query gateway
+      # (chatbot_agent/docker-compose.prod.yml, alias chatbot-gateway on this network); it
+      # sends the signed-in user's own tenant_id plus these shared keys.
+      CHATBOT_ENABLED: ${CHATBOT_ENABLED:-false}
+      CHATBOT_URL: ${CHATBOT_URL:-http://chatbot-gateway:8010}
+      CHATBOT_SQL_API_KEY: ${CHATBOT_SQL_API_KEY:-}
+      CHATBOT_API_KEY: ${CHATBOT_API_KEY:-}
+      # Self-imposed capacity ceilings — process-global (see the no-replicas note
+      # below), not per tenant/user. Raising them assumes the query gateway, its
+      # LLM provider's rate limit, and the shared Postgres it reads from can all
+      # actually take the load; tune via .env.prod, not here.
+      CHATBOT_RATE_LIMIT_PER_MINUTE: ${CHATBOT_RATE_LIMIT_PER_MINUTE:-20}
+      CHATBOT_MAX_CONCURRENT: ${CHATBOT_MAX_CONCURRENT:-40}
+      CHATBOT_MAX_CONCURRENT_PER_USER: ${CHATBOT_MAX_CONCURRENT_PER_USER:-3}
+      # Documents users upload for the assistant to read. Off until the chatbot's ingestion
+      # services are running (chatbot_agent: `--profile ingest`, alias chatbot-ingestion);
+      # CHATBOT_INGEST_API_KEY must equal that stack's INGEST_API_AUTH_KEY.
+      CHATBOT_INGEST_ENABLED: ${CHATBOT_INGEST_ENABLED:-false}
+      CHATBOT_INGEST_URL: ${CHATBOT_INGEST_URL:-http://chatbot-ingestion:8001}
+      CHATBOT_INGEST_API_KEY: ${CHATBOT_INGEST_API_KEY:-}
+      CHATBOT_MAX_DOCUMENTS: ${CHATBOT_MAX_DOCUMENTS:-500}
+    volumes:
+      - uploads:/app/uploads
+    # No ports: — the frontend container reaches it at backend:8000 internally.
+    # Do NOT add replicas / extra uvicorn workers: the period-close scheduler
+    # runs in-process and would fire duplicate jobs.
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    # No ports: — its built-in nginx proxies /api and /ws to backend:8000.
+    # The edge nginx (~/edge/) forwards closeloop.foursymmetrons.com here as
+    # container "closeloop-prod-frontend-1" on network closeloop-prod_default.
+
+volumes:
+  pgdata:
+  uploads:

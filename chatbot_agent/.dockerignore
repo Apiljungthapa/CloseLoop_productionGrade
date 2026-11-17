@@ -1,0 +1,7 @@
+.venv
+**/__pycache__
+**/*.pyc
+output
+qdrant_storage*
+tests
+src/config/dev.env

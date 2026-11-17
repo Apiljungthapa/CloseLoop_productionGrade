@@ -1,0 +1,606 @@
+CloseLoop System Reference - Missing Sections and Corrections
+
+Document type: Supplement to the CloseLoop System Reference Document (the PDF).
+Purpose: The PDF explains WHAT CloseLoop is. It has no step-by-step guidance, no worked examples and no troubleshooting. It is also out of date in several places. This supplement adds the missing "how to" content and lists the corrections.
+Format: Plain text only. No code, no tables, no diagrams, no images. Every section is self-contained so it can be read on its own. Button, menu and dialog names are written exactly as they appear in the application.
+
+HOW THIS SUPPLEMENT IS ORGANISED
+
+Part A lists what in the PDF is wrong or out of date.
+Part B lists what is completely missing from the PDF (new sections 21 to 45, which continue the numbering of the PDF, whose last section is 20).
+Part C gives worked examples.
+Part D gives the questions people most often ask, with answers.
+
+
+=====================================================================
+PART A. CORRECTIONS TO THE PDF
+=====================================================================
+
+A1. Migration count (PDF sections 1.2 and 17.6)
+The PDF says there are 53 Alembic migrations. The current number is 60 (the latest is migration 0060). Use "60 migrations to date" or, better, do not quote a number.
+
+A2. Due date after period end (PDF section 5.6)
+The PDF says a due date can be set in two modes, "Within period" and "After period end" (up to N days after the period end date). This is no longer true. The "N days after period end" mode has been retired. Every task due date now stays inside its own period. A due date can never be later than the last day of the period. Existing data was corrected on 27 October 2026.
+
+A3. Words "plan" and "pack" (PDF sections 7 and 8)
+The PDF calls the template a "close pack" and the generated working copy a "plan". In the application screens the generated working copy is called a "pack" (the API and some internal screens still say "plan"). To avoid confusion use these names:
+- Close Pack, also called a pack template: the reusable template. Created by the Super Admin on the Close Packs page.
+- Pack, also called a plan: a Close Pack generated for one period and one entity. This is what people open from their dashboard. Its title is the Close Pack name, then a dash, then the period label (for example "Quarterly Tax Pack - Q1").
+- "Generate Plans" is the name of the button the Super Admin uses to create packs for entities.
+Important: the pack title does not contain the entity name. The entity is shown on the pack card.
+
+A4. Non-working days are missing (PDF sections 5, 7, 9, 10)
+The PDF never mentions weekends or holidays. See new section 41. In short: Saturday and Sunday are non-working days for every tenant, and so is every holiday recorded by the Platform Owner. A due date that CloseLoop generates and that lands on a non-working day moves to the next working day (or the previous working day if the next one would fall outside the period). Daily and Weekly tasks are never generated on Saturday or Sunday. A person cannot pick a non-working day as a due date.
+
+A5. Optional and Skipped tasks (PDF section 9.1)
+The PDF lists "Required or optional flag" but does not say what optional means. See new section 40. In short: an optional task that is past its due date and has not been started (status Not Started, Assigned, or In Progress without completion) is called Skipped. A skipped task is not counted in totals, completed counts or percentages, and it is never shown as overdue. Optional tasks that are completed or in review count normally.
+
+A6. HRMS integration (PDF sections 12.3 and 17.5)
+The PDF says the HRMS connection is read-only and that users select HRMS projects and activities to log time against. This is out of date. CloseLoop now has an automated HRMS timesheet: the HRMS Integration page builds a timesheet from the work a person submitted, lets the person review it, and then sends it to the HRMS, one day at a time. CloseLoop still reads the HRMS project and activity lists. See new section 38.
+
+A7. Report Studio is missing (PDF section 15)
+The PDF lists six reports and the formats CSV, PDF and JSON. It does not mention Report Studio, which creates plain-language reports and exports them as PDF, Excel or CSV. See new section 37.
+
+A8. Chatbot status (PDF section 18.1)
+The PDF says the AI chatbot is "in progress (v0.1)". The chatbot is now live and is called Close Bhai. It is read-only, scoped to the user's own tenant and role, answers questions about how to use CloseLoop and about the user's own tasks, packs and periods, and can also produce Report Studio report cards. It cannot create or change anything. See new section 44.
+
+A9. Time log views for Team Leads (PDF section 12.2)
+A Team Lead can now open any team member's time history from the Users page. See new section 36.
+
+A10. Order of tasks inside a pack
+Task lists inside a pack are shown in deadline order: tasks due today first, upcoming tasks by date, and tasks whose deadline has been missed at the bottom.
+
+A11. Carry-forward eligibility (PDF section 11.2)
+The PDF list is correct: Not Started, In Progress, Pending Review and Rejected items are eligible. One detail the PDF does not state: eligibility is decided by status only. Whether a task is required or optional is not checked. A skipped optional task is not counted in reports, but because its status is still Not Started it is eligible for carry-forward like any other open task. Also, when a period closes, the Upcoming tasks of the next period are unlocked and become Not Started.
+
+A12. Navigation menus per role (PDF section 3)
+The PDF names the dashboards but not the menus. The top menu for each role is listed in section 21 below.
+
+
+=====================================================================
+PART B. NEW SECTIONS (HOW-TO GUIDES) - SECTIONS 21 TO 45
+=====================================================================
+
+---------------------------------------------------------------------
+21. Menus per role and the normal order of setup
+---------------------------------------------------------------------
+
+21.1 Top menu for each role
+- Platform Owner sees: Tenants, Holidays.
+- Super Admin sees: Dashboard, Organization, Periods, Close Packs, Carry Forward, Users, Reports.
+- Team Lead sees: Dashboard, Carry Forward, HRMS Integration, Users, Reports.
+- Team Member sees: Overview, HRMS Integration.
+
+21.2 Normal order of setup and use
+Work in CloseLoop must be set up in this order, because each step needs the one before it.
+Step 1: The Platform Owner creates the tenant (the company workspace) and its first Super Admin.
+Step 2: The Super Admin creates Entity Groups.
+Step 3: The Super Admin creates Entities. Every entity must belong to at least one group.
+Step 4: The Super Admin invites Team Leads and Team Members and gives them their entities.
+Step 5: The Super Admin sets up Periods.
+Step 6: The Super Admin builds a Close Pack, which is the reusable template of tasks.
+Step 7: The Super Admin generates packs from the Close Pack for one or more entities and assigns each pack to a Team Lead.
+Step 8: The Team Lead adds extra tasks if needed and assigns tasks to Team Members.
+Step 9: Team Members do the work and submit it for review.
+Step 10: The Team Lead approves or rejects the work.
+Step 11: When the period closes, unfinished work can be carried forward into the next period.
+
+21.3 Why the order matters
+You cannot create an entity without a group. You cannot generate a pack without an active Close Pack, an existing period and an existing entity. You cannot add a task to a pack that does not exist yet, and you cannot add a task to a closed pack.
+
+---------------------------------------------------------------------
+22. How to create a tenant (Platform Owner)
+---------------------------------------------------------------------
+Who can do it: Platform Owner only.
+Step 1: Log in as the Platform Owner and open Tenants from the top menu.
+Step 2: Click the button at the top right of the page to open the Create tenant dialog.
+Step 3: Enter the Tenant name and the Plan limit.
+Step 4: Under the heading "Super Admin (initial user)", enter the Super Admin's Name, Email and Password.
+Step 5: Click Create tenant.
+Step 6: A dialog called "API credentials" appears. It shows the tenant's client_id and client_secret. Copy both and store them safely, then click Done. These are the credentials for the read-only integration API. They are separate from any user's login password.
+
+Other actions on a tenant row: a key button creates a new client_secret for the integration API; Suspend switches the tenant off and Activate switches it back on; Delete removes the tenant and ALL its data permanently and asks for confirmation first.
+Each tenant gets its own slug, a short unique name. After login, all of that tenant's pages live under the address segment of its slug.
+The Platform Owner never sees a tenant's business data.
+
+---------------------------------------------------------------------
+23. How to create an Entity Group (Super Admin)
+---------------------------------------------------------------------
+What it is: A grouping of entities, for example Region, then Country, then City. Groups can be nested to any depth.
+Step 1: Open Organization. The left panel is called Entity Groups.
+Step 2: Click New Group. If a group is already selected, the button reads Add Child and creates a group inside the selected one.
+Step 3: In the Create Entity Group dialog fill in:
+- Name (required), for example EMEA or Europe.
+- Type: Region, Division, Department, Sub-Region, Business Unit or Custom.
+- Parent Group: choose a parent group, or choose "Top level (no parent)".
+- Description (optional).
+Step 4: Save.
+Extra: You can search groups, filter by Active only, Inactive only or All, filter by type, and expand or collapse the tree. Editing a group checks that no loop is created. Deleting a group asks for confirmation and cannot be undone.
+
+---------------------------------------------------------------------
+24. How to create an Entity (Super Admin)
+---------------------------------------------------------------------
+What it is: An entity is the unit that gets its own pack for each period. It is a company, a branch or a unit. Every entity must belong to at least one Entity Group, so create a group first.
+Step 1: Open Organization. The right panel is called Entities. It shows the entities of the selected group, or all entities.
+Step 2: Click New Entity.
+Step 3: In the Create Entity dialog fill in:
+- Entity Name (required).
+- Groups (required): tick every group the entity belongs to. An entity can be in several groups at once.
+- Primary Group: the group used to display the hierarchy. It defaults to the first group you tick.
+- Description (optional).
+Step 4: Save.
+Changing many entities at once: tick the entities and click Bulk assign. Choose Add to groups, Replace memberships or Remove from groups, and pick the groups. The primary group of an entity cannot be removed.
+Deleting an entity also deletes every pack that belongs to it. The application asks you to confirm first.
+
+---------------------------------------------------------------------
+25. How to add users and give them access to entities (Super Admin, Team Lead)
+---------------------------------------------------------------------
+Who can add whom: a Super Admin can add Team Leads and Team Members. A Team Lead can add Team Members only.
+Step 1: Open Users and click Invite user.
+Step 2: Fill in Name, Email, Password, Role, Title (optional) and Primary Entity. The Super Admin or Team Lead chooses the password and tells the person. Primary Entity is required, because every user needs one.
+Step 3: Click Invite. The account exists immediately.
+
+Giving a person access to more than their primary entity (Super Admin only):
+Step 1: On the Users page find the person and click Assignments.
+Step 2: Tick the extra entities and entity groups the person should work in.
+Step 3: Save.
+
+Other buttons on the Users page: Details changes the person's title and primary entity. Time log opens the person's time history (see section 36). A trash button, visible to the Super Admin only, deletes the user.
+A person's entities and groups decide whose work they can see.
+
+---------------------------------------------------------------------
+26. How to set up periods (Super Admin)
+---------------------------------------------------------------------
+Why first: A pack is always generated for one period, so periods must exist before packs can be generated. Open Periods.
+
+26.1 Option A - generate a schedule
+Step 1: Click Configure and Generate Schedule.
+Step 2: Choose the Cadence. The choices are: Fixed weeks, English month, English quarter, English half-year, English year, Nepali month (BS), Nepali quarter (BS fiscal), Nepali half-year (BS fiscal) and Nepali year (BS fiscal).
+Step 3: Set the Start date. For Fixed weeks also set the Start day of week and the Duration in weeks.
+Step 4: Turn on or off "Auto-generate next period on close" and "Enable carry-forward of open items".
+Step 5: Set the Number of periods to generate. Use Preview to check the list.
+Step 6: Click Save and Generate.
+Warning: this REPLACES all existing periods of the tenant.
+
+26.2 Option B - import periods
+Step 1: Click Import Periods.
+Step 2: Click Load standard periods to load the standard schedule P1 to P13 (about four weeks each), or upload your own file with a label, a start date and an end date for each period.
+
+26.3 Closing a period
+Step 1: On the Current period card click Close this period.
+Step 2: A dialog called Review and Carry-Forward lists the unfinished work. Confirm.
+Result: the period becomes Closed, the next period opens, packs for the new period are generated, and carry-forward groups are created from the unfinished work. The scheduler can also do the same automatically when a period expires.
+Task due dates always stay inside their own period.
+
+---------------------------------------------------------------------
+27. How to build a Close Pack, the reusable template (Super Admin)
+---------------------------------------------------------------------
+What it is: A Close Pack lists the tasks and sub-tasks that every entity must do each period. Packs for entities are generated from it later.
+
+27.1 Create the Close Pack
+Step 1: Open Close Packs and click New Pack.
+Step 2: In the New Pack dialog fill in:
+- Pack Name (required), for example "Quarterly Tax Pack".
+- Calendar (required): English (Gregorian, AD) or Nepali (Bikram Sambat, BS). It controls every period, date, task schedule and report of the pack.
+- Status: active or inactive. Only active Close Packs can be generated for entities.
+- Description (optional).
+Step 3: Save. The Close Pack appears in the list on the left with its calendar badge and its version (v1).
+
+27.2 Add a task to the Close Pack, one at a time
+Step 1: Select the Close Pack in the list. Its page shows the Template Structure.
+Step 2: Click Add task template.
+Step 3: In the Add Task Template dialog fill in:
+- Name, for example "Bank Reconciliation", and Description (optional).
+- Frequency: Once per period, Daily, Weekly, Monthly, Quarterly, Semi-annual, Annual or Custom.
+- For "Once per period": the due day, for example day 10, counted either from period start or from period end.
+- For a recurring task: the First Due Date, an optional End date, and for Weekly the weekdays. "Due Days" sets how many days after each occurrence the task is due.
+- Due Time (optional).
+- Priority: Low, Medium or High. The default is Medium.
+- Tags (optional).
+- Optional: this switch is available only on Daily tasks. An uncompleted occurrence of an optional task is never marked overdue.
+Step 4: Save.
+
+27.3 Add a sub-task to a task template
+Step 1: Open the task block and click the add sub-task button. The Add Sub-task Template dialog opens.
+Step 2: Fill it in the same way. A sub-task has its own schedule, but it can never be due after its parent task.
+Step 3: Use the edit and delete buttons on a task or sub-task to change or remove it.
+
+27.4 Add many tasks at once from a spreadsheet
+Step 1: Click Download template (.xlsx) or the .csv version, and fill it in. The sheet is called "Tasks and Subtasks".
+Step 2: Every row needs a Row Type (Task or Subtask), a Title, and a key. A task row needs a Task Key, a short code such as T1. A sub-task row needs a Parent Task Key, which is the Task Key of its task.
+Step 3: Everything else is optional: Description, Priority, Reviewer Required (Yes or No), Tags, Frequency, Interval Count, Days Of Week, Recurrence Start, Recurrence End, Due Day Of Period, Due Anchor (period start or period end), Due Time and Order. Allowed Frequency words are ONE_OFF, ONCE_PER_PERIOD, DAILY, WEEKLY, MONTHLY, QUARTERLY, SEMI_ANNUAL and ANNUAL. A sub-task row needs either a Due Day Of Period or a Frequency.
+Step 4: Click Upload template and choose the .xlsx, .xlsm or .csv file. If a row has a mistake, the application reports the row number and the reason.
+
+27.5 Other Close Pack actions
+- Edit changes the name, calendar, status or description.
+- Sync plans re-applies the template to every task that has not been started in the packs of open periods. This also happens automatically after every template edit.
+- Every edit creates a new version. A generated pack remembers the version it came from, and old versions never change.
+- The trash button deletes the Close Pack and everything generated from it, after confirmation.
+- Editing a single pack later (adding or changing a task inside one entity's pack) does not change the Close Pack template.
+
+---------------------------------------------------------------------
+28. How to put a Close Pack inside an entity (generate packs) and assign it to a Team Lead (Super Admin)
+---------------------------------------------------------------------
+This is the step that "drops" a Close Pack into an entity. In the application it is called Generate Plans. The result is one pack for each selected entity for the chosen period.
+
+Before you start, check three things: the Close Pack is active; the period exists; the entity exists.
+
+Step 1: Open the Dashboard.
+Step 2: Click Generate Plans.
+Step 3: In the Generate Plans dialog:
+- Close Pack: choose the Close Pack. Only active Close Packs are listed.
+- Period: choose the period. The current period is already selected.
+- Assign whole pack to a Team Lead (optional): choose the Team Lead who will manage the pack.
+- Entities: tick one or more entities, or click Select all. At least one entity is required.
+Step 4: Confirm.
+
+What happens next:
+- One pack is created for each selected entity. Each pack is titled with the Close Pack name and the period label. Its tasks come from the template and start unassigned.
+- Generating the same Close Pack, period and entity again does not create duplicates.
+- A pack without a Team Lead can be seen by the people in its scope but changed only by a Super Admin. Once a Team Lead is assigned, only that Team Lead or a Super Admin can change the pack. Other Team Leads see it as View only.
+- The scheduler also generates packs automatically when a new period opens.
+
+To assign or change the Team Lead later: open the pack from the Super Admin Dashboard (the list called All Plans) and use "Assign whole pack to".
+
+Remember: the pack title does not include the entity name. If one Close Pack is generated for several entities, all of those packs have the same title and are told apart by the entity shown on the pack card. If you want the entity name to appear in the title, put it into the Close Pack name when you create the template.
+
+---------------------------------------------------------------------
+29. How to create a task in CloseLoop (all the ways)
+---------------------------------------------------------------------
+There are three ways to create a task. Pick the one that matches what you need.
+
+Way 1 - A task that every entity must do each period.
+Add it to the Close Pack template (section 27.2). Packs of open periods for every entity pick it up automatically. Only a Super Admin can do this. There is no feature literally named "global task"; adding the task to the Close Pack is the way to give the same task to all entities.
+
+Way 2 - A task that belongs to one entity's pack only.
+Add a custom task inside that pack (section 30). Only the Team Lead who owns the pack, or a Super Admin, can do this. It does not change the template or any other entity.
+
+Way 3 - Many tasks at once.
+Upload a spreadsheet to the Close Pack (section 27.4).
+
+Who cannot create tasks: Team Members cannot create, delete or restructure tasks. The Platform Owner has no access to tenant data. The chatbot Close Bhai cannot create tasks; it only explains the steps.
+
+Task fields in summary: Title (Task Name), Description (Details), Priority (High, Medium or Low), Due date and optional Due time, Tags, Required or Optional, Assignees, Sub-tasks, and Repeat (frequency).
+
+---------------------------------------------------------------------
+30. How to create a task under an entity, step by step (inside a pack)
+---------------------------------------------------------------------
+Who can do it: the Team Lead who owns the pack, or a Super Admin.
+When to use it: you need an extra task that exists only for one entity and one period.
+
+Complete path from nothing to a new task in an entity:
+Step 1: The Super Admin makes sure the entity exists (section 24) and the period exists (section 26).
+Step 2: The Super Admin makes sure an active Close Pack exists (section 27).
+Step 3: The Super Admin generates the pack for that entity and assigns it to a Team Lead (section 28).
+Step 4: The Team Lead opens the Dashboard and clicks the pack card for the entity.
+Step 5: The Team Lead checks that the page does NOT say "View only". If it does, the Team Lead is not the owner and cannot add tasks.
+Step 6: Click Add Task.
+Step 7: In the Add Task dialog fill in:
+- Task Name (required).
+- Assignment (optional): choose Specific people and tick one or more Team Members, or choose Whole Entity to give the task to every Team Member of this pack's entity. A Team Lead may also assign a task to themselves.
+- Due Date. It must fall inside the running period of the pack. For a recurring task this field is the First Due Date. It cannot be a Saturday, Sunday or holiday; those days cannot be picked. Due Time is optional.
+- Priority: High, Medium or Low.
+- Repeat (optional). The choices are: One-off (this period), Daily, Weekly, Monthly (once per period), Quarterly, Semi-annual and Annual. A repeating task follows the same rules as a Close Pack task. For Weekly you choose weekdays from Monday to Friday. You can set an Interval (for example every 2 weeks), a Due Days offset and an End date. Daily tasks can be marked Optional.
+- Details (optional) and Tags (optional).
+- Subtasks (optional): click Add Subtask. When a task has sub-tasks, assign each sub-task to a member instead of assigning the task itself. A sub-task cannot be due after its parent task.
+Step 8: Click Add Task at the bottom of the dialog. The task appears in the pack's list.
+
+Rules to remember:
+- Tasks cannot be added to a closed pack.
+- The due date of a one-off task cannot be after the last day of the pack's period.
+- Only custom tasks (the ones added with Add Task) can be deleted. Tasks that came from the Close Pack template cannot be deleted from the pack. Their menu shows "Template task - cannot delete". To remove a template task for the future, a Super Admin deletes it from the Close Pack.
+- Adding a task to one pack does not change the Close Pack template and does not appear in other entities.
+
+---------------------------------------------------------------------
+31. How to edit, delete and assign a task (Team Lead who owns the pack, Super Admin)
+---------------------------------------------------------------------
+31.1 The task row menu
+Every task row in a pack has a three-dot menu. Its options are:
+- Edit task.
+- Edit subtasks (shown only for tasks that have sub-tasks).
+- Assign to specific people.
+- Assign to whole entity.
+- Delete task (custom tasks only).
+
+31.2 How to edit a task
+Step 1: Open the three-dot menu and choose Edit task.
+Step 2: In the Edit Task dialog you can change the Task Name, the Assignee, the Due Date, the Due Time, the Priority, the Details and the Tags.
+- The Assignee part of the dialog is not available when the task has sub-tasks (assign each sub-task instead), when the task is already Completed, or when the task is assigned to several people (manage that from the task panel).
+- For a task that is part of a repeating series, a tick box under the Assignee lets you apply the new assignee to all occurrences of the recurring task.
+Step 3: Click Save Changes.
+Editing a task in a pack never changes the Close Pack template.
+
+31.3 How to assign a task to specific people
+Step 1: Open the three-dot menu and choose Assign to specific people.
+Step 2: Tick the Team Members.
+Step 3: If the task is part of a recurring series, you may tick "Apply to all N occurrences of this recurring task" to assign every occurrence at once.
+Step 4: Confirm.
+
+31.4 How to assign a task to the whole entity
+Step 1: Open the three-dot menu and choose Assign to whole entity.
+Step 2: Confirm with Yes, assign to everyone. Every Team Member of the pack's entity receives the task.
+
+31.5 How shared tasks behave
+When a task has more than one assignee (specific people or whole entity), each person marks their own part done with their own time and notes. The task moves to review only when everyone has finished. For an optional shared task, the first person to finish completes it for the others.
+
+31.6 Other assignment facts
+- The Assign options appear for tasks that have no sub-tasks, are not completed and are not Upcoming. For a task with sub-tasks use Edit subtasks and assign each sub-task.
+- Choosing a person while creating a task assigns it at the same time.
+- A Super Admin can use the same menus from the pack page opened from the Super Admin Dashboard.
+
+31.7 Bulk actions
+Step 1: Tick several task rows in a pack. A bar appears with Assign, Unassign, Approve and Reject.
+Step 2: For recurring tasks choose either "Only the N selected tasks" or "Every occurrence".
+Step 3: Rejecting in bulk needs one shared note.
+Tasks with sub-tasks, Upcoming tasks and completed tasks cannot be ticked for bulk actions.
+
+31.8 Task statuses and tabs
+Statuses: Not Started, Assigned, In Progress, Pending Review, Completed, Rejected, Carried Forward and Upcoming.
+The task list has these tabs: All Tasks, Due Today, Overdue, Skipped, Not Started, In Progress, Completed, Pending Review, Rejected and Upcoming.
+Upcoming tasks belong to a future period and cannot be edited until that period becomes current.
+
+---------------------------------------------------------------------
+32. How a Team Member does and submits work (Team Member)
+---------------------------------------------------------------------
+Step 1: Open Overview. Each pack card shows your progress. Click a pack to see your tasks.
+Step 2: Click a task to open its side panel. It shows the description, tags, due date, comments and attachments.
+Step 3: Add comments and upload evidence or attachments in the panel when needed.
+Step 4: When the work is finished, use the Completion control (Submit for review) in the panel.
+Step 5: In the Submit for Review dialog enter the Time spent (hours and minutes) and Notes, then click Submit for Review. The status becomes Pending Review.
+Step 6: If you submitted by mistake and the review has not happened yet, switch the control off. The task goes back to In Progress.
+Shared tasks: the dialog is called Mark Your Part Done and the button is Mark My Part Done. For shared tasks, and for a Team Lead's own solo tasks, time and notes are required.
+If the task is rejected you see the reason. Do the rework and submit it again.
+
+---------------------------------------------------------------------
+33. How a Team Lead reviews work (Team Lead)
+---------------------------------------------------------------------
+Step 1: Open the pack from the Dashboard. Tasks waiting for review appear under the Pending Review tab.
+Step 2: Open the review, titled Review Task (or Review Subtask). Read the assignee's time and notes.
+Step 3: Click Approve to complete the task. Or write a Review Note and click Reject. The note is required for a rejection and is sent back to the assignee.
+Step 4: To handle many at once, tick the rows and use Approve or Reject in the bulk bar. Rejecting needs one shared note.
+Only the pack's owning Team Lead reviews the pack's tasks. Packs owned by other Team Leads are read-only.
+
+---------------------------------------------------------------------
+34. Carry-forward step by step (Super Admin, Team Lead)
+---------------------------------------------------------------------
+When a period closes, unfinished eligible work is collected into a carry-forward group with the status Pending.
+Step 1: Open Carry Forward. Filter by Pending, Approved or Rejected.
+Step 2: Click Approve to copy the items into the next period, or Reject to drop them. Add an optional note in the dialog.
+Step 3: Approved items are copied into the next period and the originals are marked Carried Forward.
+Carry-forward can be turned on or off in the period schedule settings (section 26.1). Every carry-forward action is written to the audit log.
+
+---------------------------------------------------------------------
+35. Deadlines, calendar and overdue work
+---------------------------------------------------------------------
+- The Deadlines page lists every open task that is due, soonest first.
+- A Team Member's Overview also has a deadlines panel.
+- Overdue means a task is open (Not Started, Assigned, In Progress, Pending Review or Rejected), is not skipped, and its due date is before today. Overdue age is counted in working days, so weekends and holidays do not age a task.
+- A skipped task is never overdue.
+
+---------------------------------------------------------------------
+36. Time logging and viewing time history
+---------------------------------------------------------------------
+- Time spent is entered when a task or sub-task is submitted (section 32).
+- On the Team Member Overview, the card "Time Logged Today" shows progress toward the daily target of 8 hours. Click View history to open the Time Log page, which shows time by day, week and month.
+- A Team Lead can open any team member's history: on the Users page click the Time log button next to the person. This view is for Team Leads only.
+
+---------------------------------------------------------------------
+37. Reports and Report Studio (Team Lead, Super Admin)
+---------------------------------------------------------------------
+37.1 Classic reports
+Open Reports. The Super Admin sees the whole tenant. The Team Lead sees only their own entities, groups and owned packs. Team Members and the Platform Owner cannot open reports. Live status of the current period is under Reports, Current Period Status.
+
+37.2 Report Studio
+Report Studio builds a report from a request written in plain words and shows KPIs, charts, key findings and recommended actions.
+Step 1: Open Reports and click the Report Studio banner. Or type the request into the Close Bhai chat.
+Step 2: Type a request, pick one of the examples, or choose the options by hand.
+Step 3: Read the result as a dashboard, or download it as PDF, Excel or CSV.
+Examples that work: "Generate the monthly task completion report", "Prepare a report of pending tasks by team member", "Compare this period with the previous period", "Generate a close-status report for all entities", "Overdue report for one entity as PDF", "Compare October with September as Excel".
+
+37.3 The five Report Studio reports
+- Period completion: how much of the period is done, by entity, and how many items are overdue.
+- Pending by member: who holds the open work, who is overloaded, and what is overdue per person.
+- Period comparison: this period against another period, with the last six periods as a trend.
+- Close status: for each entity, one of Closed, Ready to close, On track, At risk or Behind, and what is holding it up.
+- Overdue: every overdue item with its age in working days, by entity and owner.
+
+37.4 Rules used in all reports
+Counted tasks exclude carried-forward tasks, Upcoming placeholders and skipped tasks. Every other optional task counts like a required one. Closed means every pack of the entity is closed. Ready to close means every task is done. On track means nothing is overdue and completion is within 10 points of the work already due. Behind means 25 percent or more of the open work is overdue, or completion is 25 or more points behind. At risk is in between.
+Exports are recorded in the audit log.
+
+---------------------------------------------------------------------
+38. HRMS Integration - the automated timesheet (Team Lead, Team Member)
+---------------------------------------------------------------------
+What it does: it builds a monthly timesheet from the work you submitted in CloseLoop and sends it to the external HRMS, one day at a time, after you review it.
+Step 1: Open HRMS Integration.
+Step 2: Choose the Month (an English AD month), the Year and the HRMS Project.
+Step 3: Read the list. CloseLoop shows every day of the month. Weekends and recorded holidays are marked. A day with nothing submitted shows "Nothing submitted".
+Step 4: Understand the rows. A person is counted as having worked on a task on the day they SUBMITTED it. Each submitted task or sub-task becomes a row. The hours are the Time Taken entered at submission. If the time was left blank the row has 0 hours and cannot be sent until you type the hours (from 1 minute up to 24 hours). A rejected task is a row again only after it is submitted again.
+Step 5: Check the matched HRMS activity for each row. If an activity has extra fields (sub activities), fill in every field; a row cannot be sent until each field has a value.
+Step 6: Optionally set "Only up to" a date to send only part of the month.
+Step 7: Tick the confirmation that you have checked the HRMS for entries already made there, then send.
+Step 8: The list "Submissions for (month)" shows what was sent. If a reply was lost, check the HRMS yourself and press It arrived or It didn't arrive.
+Important rules: everyone fills in only their own timesheet. A date that CloseLoop already sent is closed; later rows for that date are held back with the message "this date was already sent", and extra time for that date must be added in the HRMS directly. CloseLoop cannot read existing HRMS entries, so it prevents duplicates only against what it sent itself. If everything you submitted in the month has already been sent, the page says so. Reminders are sent near month end.
+
+---------------------------------------------------------------------
+39. Holidays (Platform Owner)
+---------------------------------------------------------------------
+Holidays are one list shared by all tenants. Only the Platform Owner changes it.
+Step 1: Open Holidays.
+Step 2: Add a holiday with its date and name, or paste many lines in the form year-month-day, comma, name (for example: 2026-11-05, Example Festival).
+A new holiday applies to dates created afterwards. It does not move tasks that already exist. Every recorded holiday is skipped by generated due dates and is the only kind of date marked as a holiday on calendars. The 2083 BS holidays were entered manually.
+
+---------------------------------------------------------------------
+40. Optional and skipped tasks
+---------------------------------------------------------------------
+- A task can be marked Optional (today this can be set for Daily tasks). Required is the default.
+- An optional task whose due date has passed without being started is called Skipped. It appears under the Skipped tab.
+- A skipped task is not counted in totals, completed counts or percentages, and it is never overdue.
+- An optional task that is completed or in review counts normally and is shown as Completed.
+- A required task that is late is Overdue.
+
+---------------------------------------------------------------------
+41. Weekends and holidays in detail
+---------------------------------------------------------------------
+- Saturday and Sunday are non-working days for every tenant. This is not a per-tenant setting.
+- Every holiday recorded by the Platform Owner is also a non-working day.
+- Generated due dates never land on a non-working day. They move to the next working day, or to the previous working day if moving forward would leave the period.
+- Daily and Weekly tasks are never created on Saturday or Sunday. The weekday choice for Weekly tasks is Monday to Friday.
+- Date pickers grey out non-working days and refuse them. The server also rejects a due date picked by hand that falls on a non-working day.
+- The one exception is a date that is not task work, such as the start date of a period, which may be a non-working day.
+
+---------------------------------------------------------------------
+42. Notifications, profile and password
+---------------------------------------------------------------------
+- The bell icon in the top bar shows alerts, for example when a pack is assigned to you. Unread alerts can be marked as read. Email notifications are also sent.
+- Open My Profile to change your name, email or password. Leave the password boxes blank to keep your current password. To set a new one, enter your current password and confirm the new one.
+- If you cannot sign in, use "Forgot password? Reset it here" on the login page. A reset link is sent by email.
+
+---------------------------------------------------------------------
+43. Team Members page (Team Lead)
+---------------------------------------------------------------------
+Shows each team member's workload for the period and flags members who are over 80 percent load. Use it before assigning work.
+
+---------------------------------------------------------------------
+44. Close Bhai, the chat assistant
+---------------------------------------------------------------------
+- The floating button at the bottom right opens the assistant.
+- It answers questions about your own organisation's tasks, packs and periods, and about how to use CloseLoop.
+- It is read-only. It explains and reports. It does not create or change anything.
+- It only sees data inside your own tenant and role.
+- Use New conversation to start fresh, and My documents or Add documents to add reference files for your organisation.
+- It can return a Report Studio report card with links to open the dashboard or download PDF, Excel or CSV.
+- If asked "Can you create a task for me?" the correct answer is no; it tells the person the steps in sections 29 and 30.
+
+---------------------------------------------------------------------
+45. Extra glossary terms
+---------------------------------------------------------------------
+- Pack: another word for a plan; a Close Pack generated for one period and one entity.
+- Generate Plans: the Super Admin action that creates packs for entities.
+- Custom task: a task added directly inside one pack with Add Task. It can be deleted. Template tasks cannot.
+- Template task: a task that came from the Close Pack.
+- Whole Entity: an assignment option that gives a task to every Team Member of the pack's entity.
+- Shared task: a task with more than one assignee. Each person marks their own part done.
+- Optional task: a task that may be left undone without being overdue.
+- Skipped: an optional task past its due date that was never started.
+- Working day: a day that is not Saturday, Sunday or a recorded holiday.
+- Holiday: a date recorded by the Platform Owner; one list shared by all tenants.
+- Report Studio: the plain-language report builder.
+- Close Bhai: the read-only chat assistant.
+- Evaluation date (reports): today, or the day after the period ended for a finished period.
+- Submit for Review: the Team Member action that moves a task to Pending Review.
+- Mark My Part Done: the same action for a shared task.
+- View only: the label shown when you do not own a pack and cannot change it.
+
+
+=====================================================================
+PART C. WORKED EXAMPLES (all names and numbers are made up)
+=====================================================================
+
+Example 1. Set up a monthly bank reconciliation for three branches
+Situation: A company has three branches, Kathmandu, Pokhara and Butwal. Each must reconcile its bank every month by working day 10.
+Step 1: The Super Admin opens Organization and creates one Entity Group called "Branches".
+Step 2: The Super Admin creates three entities, Kathmandu Branch, Pokhara Branch and Butwal Branch, and ticks the group "Branches" for each.
+Step 3: The Super Admin opens Periods, chooses the cadence Nepali month (BS), sets the start date and clicks Save and Generate.
+Step 4: The Super Admin opens Close Packs, clicks New Pack, names it "Monthly Close", chooses the Nepali calendar, sets it active and saves.
+Step 5: The Super Admin selects "Monthly Close", clicks Add task template, names the task "Bank Reconciliation", chooses Once per period, due day 10 counted from period start, priority High, and saves.
+Step 6: The Super Admin opens the Dashboard, clicks Generate Plans, chooses "Monthly Close", the current period and a Team Lead, clicks Select all in the Entities list and confirms.
+Result: three packs exist, one per branch, each containing "Bank Reconciliation". If day 10 is a Saturday, Sunday or holiday, the due date moves to the next working day.
+
+Example 2. Add an extra one-time task to only one branch
+Situation: Only Pokhara Branch must also upload a licence copy this period.
+Step 1: The Team Lead who owns the Pokhara pack opens the Dashboard and clicks the Pokhara pack card.
+Step 2: The page does not say "View only", so the Team Lead clicks Add Task.
+Step 3: Task Name "Upload licence copy". Assignment: Specific people, tick the Pokhara team member. Due Date: a working day inside the period. Priority: Medium. Repeat: One-off (this period).
+Step 4: Click Add Task.
+Result: the task exists only in the Pokhara pack for this period. Kathmandu and Butwal are not affected, and the Close Pack is not changed.
+
+Example 3. A daily optional task
+Situation: Staff should post a daily cash count, but missing a day is acceptable.
+Step 1: In Add Task choose Repeat: Daily and tick Optional.
+Step 2: Set the First Due Date and save.
+Result: one occurrence per working day. A day that passes without the task being started becomes Skipped, is not counted in totals and is never overdue.
+
+Example 4. A task for everyone in an entity
+Step 1: In the pack list open the three-dot menu on the task and choose Assign to whole entity.
+Step 2: Confirm with Yes, assign to everyone.
+Result: each Team Member of the entity must mark their own part done, with their own time and notes. The task goes to Pending Review when all are finished.
+
+Example 5. Rejection and rework
+Step 1: A Team Member submits "Bank Reconciliation" for review with 2 hours 30 minutes and a note. Status is Pending Review.
+Step 2: The Team Lead opens the Review Task dialog, reads the note, types the Review Note "Closing balance does not match the statement" and clicks Reject. Status is Rejected.
+Step 3: The Team Member reads the reason, fixes the work and submits again. The Team Lead approves. Status is Completed.
+
+Example 6. Carry-forward
+Step 1: At the end of the month the period closes (automatically or by the Super Admin). Two tasks are still In Progress.
+Step 2: A carry-forward group with status Pending is created.
+Step 3: The Super Admin or Team Lead opens Carry Forward and clicks Approve. The two tasks are copied into the next period, and the originals are marked Carried Forward.
+
+Example 7. Ask for a report in plain words
+Step 1: A Team Lead opens Reports, then Report Studio, and types "Overdue report for Pokhara Branch as PDF".
+Step 2: The result shows how many items are overdue, their age in working days, the owner of each, key findings and recommended actions.
+Step 3: The Team Lead downloads the PDF.
+
+
+=====================================================================
+PART D. COMMON QUESTIONS AND ANSWERS
+=====================================================================
+
+Why is a pack "View only" for me, or why is there no Add Task button?
+Only the Team Lead who owns the pack, or a Super Admin, can edit it. A pack that has not been assigned to a Team Lead is view-only for everyone except the Super Admin. The pack must also be open, not closed.
+
+How do I create a task under an entity?
+Open the pack of that entity from the Dashboard (the pack must exist for the period, see section 28), make sure you own it, click Add Task, fill in the dialog and click Add Task. See section 30.
+
+How do I put a Close Pack into an entity?
+Use Generate Plans on the Super Admin Dashboard. Choose the Close Pack, the period, an optional Team Lead and tick the entities. See section 28.
+
+How do I give the same task to every entity?
+Add it to the Close Pack template. Packs of open periods for every entity pick it up automatically.
+
+Why do some pack names include an entity and others do not?
+A pack title is the Close Pack name plus the period label. CloseLoop never adds the entity itself. If you want the entity visible in the title, put it in the Close Pack name.
+
+Why did a pack keep its old name after I renamed the Close Pack?
+Renaming a Close Pack changes the template only. Packs already generated keep their title. Only packs generated afterwards use the new name.
+
+Why can't I pick a due date?
+The date is probably a Saturday, Sunday or holiday, or it is outside the pack's period. Choose a working day inside the period.
+
+Why does my due date fall on a different day than I expected?
+Generated dates never land on a Saturday, Sunday or recorded holiday; they move to a working day.
+
+Why can't I edit an Upcoming task?
+Upcoming tasks belong to a future period and unlock when that period becomes current.
+
+Can I delete a task that came from the template?
+No. Only custom tasks added with Add Task can be deleted. To remove a template task for the future, a Super Admin deletes it from the Close Pack.
+
+Can a sub-task be due after its parent task?
+No.
+
+Can I add a task to a closed pack?
+No.
+
+Can a Team Member create a task?
+No. Team Members can only update status, log time, comment, attach evidence and submit for review.
+
+Can the chatbot create a task for me?
+No. Close Bhai only explains the steps and reports data.
+
+Why is a task not counted in my percentage?
+It is probably a Skipped task, a carried-forward task or an Upcoming placeholder. These are not counted.
+
+Why is my timesheet row showing 0 hours?
+The Time Taken was left blank when the task was submitted. Type the hours on the HRMS Integration page before sending.
+
+How do I become able to see another entity's work?
+Ask a Super Admin to tick that entity or group for you under Users, Assignments.
+
+Can a due date be set after the period ends?
+No. Every due date stays inside its own period.
+
+Where do holidays come from?
+Only the Platform Owner records them, on the Holidays page. They apply to every tenant.
+
+End of supplement.

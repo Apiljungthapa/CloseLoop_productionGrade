@@ -1,0 +1,55 @@
+name: Deploy CloseLoop
+
+# Fires on every push directly to main — no PR/merge required. Runs on the
+# self-hosted runner living on the production VM itself, so "checkout" IS
+# the deploy directory; there's no separate SSH-in-and-pull step.
+on:
+  push:
+    branches: [main]
+
+# If two pushes land close together, run them one at a time rather than
+# two `docker compose up` racing each other on the same containers.
+concurrency:
+  group: closeloop-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, closeloop-prod]
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          # Default `clean: true` runs `git clean -ffdx`, which would
+          # delete .env.prod (untracked + gitignored, lives right here in
+          # the deploy checkout). Keep it.
+          clean: false
+
+      - name: Snapshot current images (rollback target)
+        run: |
+          docker tag closeloop-prod-backend:latest closeloop-prod-backend:previous 2>/dev/null || true
+          docker tag closeloop-prod-frontend:latest closeloop-prod-frontend:previous 2>/dev/null || true
+
+      - name: Build images
+        run: docker compose --env-file .env.prod -f docker-compose.prod.yml build backend frontend
+
+      - name: Deploy
+        run: docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
+        # Migrations run automatically inside the backend container's
+        # entrypoint.sh (`alembic upgrade head`) on every boot — no
+        # separate migration step needed here. `db` is untouched since
+        # its image/config didn't change.
+
+      - name: Smoke test
+        id: smoke
+        run: |
+          sleep 5
+          curl -fsS https://closeloop.foursymmetrons.com/api/health
+
+      - name: Roll back on failed smoke test
+        if: failure() && steps.smoke.outcome == 'failure'
+        run: |
+          echo "Smoke test failed — rolling back to the previous images."
+          docker tag closeloop-prod-backend:previous closeloop-prod-backend:latest
+          docker tag closeloop-prod-frontend:previous closeloop-prod-frontend:latest
+          docker compose --env-file .env.prod -f docker-compose.prod.yml up -d
